@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>tensquare_user</module>
+        <module>tensquare_common</module>
     </modules>
     <packaging>pom</packaging>
 

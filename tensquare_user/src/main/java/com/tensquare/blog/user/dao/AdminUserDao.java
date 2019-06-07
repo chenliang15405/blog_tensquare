@@ -1,13 +1,12 @@
 package com.tensquare.blog.user.dao;
 
-import com.tensquare.blog.user.entity.User;
+import com.tensquare.blog.user.entity.AdminUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
  * @auther alan.chen
- * @time 2019/6/3 8:10 PM
+ * @time 2019/6/7 3:25 PM
  */
-public interface UserDao extends JpaRepository<User, String>, JpaSpecificationExecutor<User> {
-
+public interface AdminUserDao  extends JpaRepository<AdminUser, String>, JpaSpecificationExecutor<AdminUser> {
 }
