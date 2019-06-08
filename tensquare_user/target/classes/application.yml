@@ -17,4 +17,9 @@ spring:
     properties:
       hibernate:
         hbm2ddl:
-          auto: create
+          auto: update
+#jwt配置
+jwt:
+  config:
+    key: tangsong
+    ttl: 3600000

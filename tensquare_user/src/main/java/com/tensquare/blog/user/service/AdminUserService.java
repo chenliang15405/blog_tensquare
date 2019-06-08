@@ -2,12 +2,17 @@ package com.tensquare.blog.user.service;
 
 import com.tensquare.blog.user.dao.AdminUserDao;
 import com.tensquare.blog.user.entity.AdminUser;
+import com.tensquare.blog.user.entity.JwtUser;
 import com.tensquare.common.utils.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,18 +26,59 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ *  amdin 管理服务， 如果使用的是spring security，则需要实现UserDetailsService，然后实现loadUserByUsername类，进行验证即可
+ *
  * @auther alan.chen
  * @time 2019/6/7 3:25 PM
  */
 @Service
 @Transactional
-public class AdminUserService {
+public class AdminUserService implements UserDetailsService {
 
     @Autowired
     private AdminUserDao adminUserDao;
     @Autowired
     private IdWorker idWorker;
+    @Autowired
+    private BCryptPasswordEncoder encoder;
 
+
+    /**
+     * spring security的方法，验证用户登录
+     * @param loginname 登录名称
+     * @return  需要返回的是UserDetails接口
+     * @throws UsernameNotFoundException
+     */
+    @Override
+    public UserDetails loadUserByUsername(String loginname) throws UsernameNotFoundException {
+        AdminUser admin = adminUserDao.findByLoginname(loginname);
+        if(admin == null) {
+            throw new UsernameNotFoundException("用户名不存在");
+        }
+        return new JwtUser(admin);
+    }
+
+
+    /**
+     * 登录
+     * @param adminUser
+     * @return
+     */
+    public AdminUser login(AdminUser adminUser) {
+        // 先根据用户名查询用户
+        AdminUser admin = adminUserDao.findByLoginname(adminUser.getLoginname());
+        if(admin != null) {
+            //使用数据库的密码和现在的密码进行对比
+            // security 会根据解析算法match，并且每次加密都不相同，可能security 已经对login的输入密码已经加密了，需要使用match进行对比
+//            String loginPwd = encoder.encode(adminUser.getPassword());
+            if(encoder.matches(adminUser.getPassword(), admin.getPassword())){
+                // 登录成功
+                return admin;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * 查询全部列表
@@ -54,7 +100,7 @@ public class AdminUserService {
      */
     public Page<AdminUser> pageSearch(Map whereMap, int page, int size) {
         Specification<AdminUser> specification = createSpecification(whereMap);
-        Sort sort = new Sort(Sort.Direction.DESC, "create_date");
+        Sort sort = new Sort(Sort.Direction.DESC, "createDate");
         PageRequest pageRequest = PageRequest.of(page - 1, size, sort);
         return adminUserDao.findAll(specification, pageRequest);
     }
@@ -87,9 +133,9 @@ public class AdminUserService {
      */
     public void add(AdminUser admin) {
         admin.setId(idWorker.nextId()+ "");
-//        admin.setPassword(encoder.encode(admin.getPassword()));
+        admin.setPassword(encoder.encode(admin.getPassword()));
         admin.setState("0");
-        admin.setCreate_date(new Date());
+        admin.setCreateDate(new Date());
         adminUserDao.save(admin);
     }
 

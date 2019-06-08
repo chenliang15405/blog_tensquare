@@ -5,12 +5,14 @@ import com.tensquare.blog.user.service.AdminUserService;
 import com.tensquare.common.entity.PageResponse;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.entity.StatusCode;
+import com.tensquare.common.utils.JwtUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -29,7 +31,34 @@ public class AdminUserController {
 
     @Autowired
     private AdminUserService adminUserService;
+    @Autowired
+    private JwtUtil jwtUtil;
 
+
+    /**
+     * 后台登录
+     * @param adminUser
+     * @return
+     */
+    /*@ApiOperation(value = "后台登录", notes = "")
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public Response login(@RequestBody AdminUser adminUser) {
+        AdminUser loginAdmin = adminUserService.login(adminUser);
+        if(loginAdmin == null) {
+            return new Response(true, StatusCode.LONGINERROR, "登录失败");
+        }
+        //使得前后端可以通话的操作，使用jwt实现
+        //TODO 目前没有角色表，所以是固定的admin
+        //生成令牌，将token返回给用户，用户请求资源的时候，带上token作为标识，来保证是当前登录的用户，作为认证机制
+        String token = jwtUtil.createJWT(loginAdmin.getId(), loginAdmin.getLoginname(), "admin");
+
+        Map<String,String> map = Maps.newHashMap();
+        map.put("token", token);
+        map.put("role", "role");
+
+        return new Response(true, StatusCode.OK, "登录成功", map);
+
+    }*/
 
     /**
      * 查询全部数据
@@ -92,6 +121,7 @@ public class AdminUserController {
      *
      * @param admin
      */
+    @PreAuthorize("hasRole('ADMIN')") // 还可以使用这个注解表示需要权限
     @ApiOperation(value = "增加管理员")
     @RequestMapping(method = RequestMethod.POST)
     public Response add(@RequestBody AdminUser admin) {

@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @time 2019/6/7 3:25 PM
  */
 public interface AdminUserDao  extends JpaRepository<AdminUser, String>, JpaSpecificationExecutor<AdminUser> {
+
+    AdminUser findByLoginname(String loginname);
 }

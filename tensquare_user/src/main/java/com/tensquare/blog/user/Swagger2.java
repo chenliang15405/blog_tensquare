@@ -10,7 +10,8 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
 /**
- * 访问 http://localhost:9001/swagger-ui.html
+ * 访问 http://localhost:9001/swagger-ui.html  标准版
+ *     http://localhost:9001/docs.html 其他的样式的排版页面
  * swagger 配置类
  * @auther alan.chen
  * @time 2019/6/3 7:55 PM

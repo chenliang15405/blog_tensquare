@@ -10,6 +10,7 @@
     <modules>
         <module>tensquare_user</module>
         <module>tensquare_common</module>
+        <module>security_demo</module>
     </modules>
     <packaging>pom</packaging>
 

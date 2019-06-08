@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,8 @@ public class UserService {
     private UserDao userDao;
     @Autowired
     private IdWorker idWorker;
+    @Autowired
+    private BCryptPasswordEncoder encoder;
 
 
     /**
@@ -97,7 +100,7 @@ public class UserService {
         user.setRegdate(new Date());
         user.setFollowme(NOT_FOLLOW_ME);
         user.setId(idWorker.nextId() + "");
-        //TODO spring security set password
+//        user.setPassword(encoder.encode(user.getPassword()));
         userDao.save(user);
     }
 

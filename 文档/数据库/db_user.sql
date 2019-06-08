@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS `tb_admin`;
 
 CREATE TABLE `tb_admin` (
   `id` varchar(20) NOT NULL COMMENT 'ID',
+  `role` varchar(20) DEFAULT NULL COMMENT '角色名称',
   `username` varchar(100) DEFAULT NULL COMMENT '用户名称',
   `loginname` varchar(100) DEFAULT NULL COMMENT '登陆名称',
   `password` varchar(100) DEFAULT NULL COMMENT '密码',
