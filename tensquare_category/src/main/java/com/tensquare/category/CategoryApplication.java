@@ -1,13 +1,17 @@
-package com.tensquare.blog;
+package com.tensquare.category;
+
+import com.tensquare.common.utils.IdWorker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import util.IdWorker;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+@EnableSwagger2
 @SpringBootApplication
-public class Application {
+public class CategoryApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(CategoryApplication.class, args);
 	}
 
 	@Bean

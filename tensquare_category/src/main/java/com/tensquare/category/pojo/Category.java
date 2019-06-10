@@ -1,8 +1,6 @@
 package com.tensquare.category.pojo;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 /**
  * 实体类
@@ -14,10 +12,9 @@ import java.io.Serializable;
 public class Category implements Serializable{
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;//分类ID
 
-
-	
 	private String categoryname;//分类名称
 	private String state;//状态
 	private Long count;//使用数量

@@ -1,28 +1,22 @@
 package com.tensquare.category.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
-
+import com.tensquare.category.dao.CategoryDao;
+import com.tensquare.category.pojo.Category;
+import com.tensquare.common.utils.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import util.IdWorker;
-
-import com.tensquare.category.dao.CategoryDao;
-import com.tensquare.category.pojo.Category;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 服务层
@@ -31,6 +25,7 @@ import com.tensquare.category.pojo.Category;
  *
  */
 @Service
+@Transactional
 public class CategoryService {
 
 	@Autowired
@@ -77,7 +72,7 @@ public class CategoryService {
 	 * @param id
 	 * @return
 	 */
-	public Category findById(String id) {
+	public Category findById(Integer id) {
 		return categoryDao.findById(id).get();
 	}
 
@@ -86,7 +81,7 @@ public class CategoryService {
 	 * @param category
 	 */
 	public void add(Category category) {
-		category.setId( idWorker.nextId()+"" );
+//		category.setId( idWorker.nextId()+"" );
 		categoryDao.save(category);
 	}
 
@@ -102,7 +97,7 @@ public class CategoryService {
 	 * 删除
 	 * @param id
 	 */
-	public void deleteById(String id) {
+	public void deleteById(Integer id) {
 		categoryDao.deleteById(id);
 	}
 

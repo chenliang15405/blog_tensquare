@@ -22,7 +22,6 @@ CREATE TABLE `tb_article` (
   `categorylid` int(20) DEFAULT NULL COMMENT '所属类型',
   `url` varchar(100) DEFAULT NULL COMMENT 'URL',
   `type` varchar(1) DEFAULT NULL COMMENT '类型（原创、转载、翻译）',
-  `private` varchar(1) DEFAULT NULL COMMENT '是否私密文章',
   `tag` varchar(100) default null comment '标签名称',
   `tagcolor` varchar(20) default null comment '标签颜色',
   PRIMARY KEY (`id`)

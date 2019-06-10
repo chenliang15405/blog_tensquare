@@ -1,22 +1,20 @@
 package com.tensquare.category.controller;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.tensquare.category.pojo.Category;
 import com.tensquare.category.service.CategoryService;
+import com.tensquare.common.entity.PageResponse;
+import com.tensquare.common.entity.Response;
+import com.tensquare.common.entity.StatusCode;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
-import entity.PageResult;
-import entity.Result;
-import entity.StatusCode;
+import java.util.Map;
+
 /**
  * 控制器层
  * @author Administrator
@@ -25,6 +23,7 @@ import entity.StatusCode;
 @RestController
 @CrossOrigin
 @RequestMapping("/category")
+@Api(tags = "分类Controller")
 public class CategoryController {
 
 	@Autowired
@@ -35,9 +34,10 @@ public class CategoryController {
 	 * 查询全部数据
 	 * @return
 	 */
+	@ApiOperation(value = "查询全部数据", notes = "查询全部category")
 	@RequestMapping(method= RequestMethod.GET)
-	public Result findAll(){
-		return new Result(true,StatusCode.OK,"查询成功",categoryService.findAll());
+	public Response findAll(){
+		return new Response(true,StatusCode.OK,"查询成功",categoryService.findAll());
 	}
 	
 	/**
@@ -45,9 +45,11 @@ public class CategoryController {
 	 * @param id ID
 	 * @return
 	 */
+	@ApiOperation(value = "通过id获取category信息", notes = "通过id获取category信息")
+	@ApiImplicitParam(name = "id", value = "需要查询的id",required = true,dataType = "Integer",paramType = "path")
 	@RequestMapping(value="/{id}",method= RequestMethod.GET)
-	public Result findById(@PathVariable String id){
-		return new Result(true,StatusCode.OK,"查询成功",categoryService.findById(id));
+	public Response findById(@PathVariable Integer id){
+		return new Response(true,StatusCode.OK,"查询成功",categoryService.findById(id));
 	}
 
 
@@ -58,10 +60,16 @@ public class CategoryController {
 	 * @param size 页大小
 	 * @return 分页结果
 	 */
+	@ApiOperation(value = "分页条件查询", notes = "分页条件查询")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "searchMap", value = "查询条件", required = true,dataType = "Category", dataTypeClass = Category.class),
+			@ApiImplicitParam(name = "page", value = "当前页", required = true, dataType = "int",paramType = "path"),
+			@ApiImplicitParam(name = "size", value = "每页条数", required = true, dataType = "int",paramType = "path")
+	})
 	@RequestMapping(value="/search/{page}/{size}",method=RequestMethod.POST)
-	public Result findSearch(@RequestBody Map searchMap , @PathVariable int page, @PathVariable int size){
+	public Response findSearch(@RequestBody Map searchMap , @PathVariable int page, @PathVariable int size){
 		Page<Category> pageList = categoryService.findSearch(searchMap, page, size);
-		return  new Result(true,StatusCode.OK,"查询成功",  new PageResult<Category>(pageList.getTotalElements(), pageList.getContent()) );
+		return  new Response(true,StatusCode.OK,"查询成功",  new PageResponse<Category>(pageList.getTotalElements(), pageList.getContent()) );
 	}
 
 	/**
@@ -69,40 +77,47 @@ public class CategoryController {
      * @param searchMap
      * @return
      */
-    @RequestMapping(value="/search",method = RequestMethod.POST)
-    public Result findSearch( @RequestBody Map searchMap){
-        return new Result(true,StatusCode.OK,"查询成功",categoryService.findSearch(searchMap));
+	@ApiOperation(value = "条件查询", notes = "条件查询")
+	@ApiImplicitParam(name = "searchMap", value = "查询条件", required = true, dataType = "Category",dataTypeClass = Category.class)
+	@RequestMapping(value="/search",method = RequestMethod.POST)
+    public Response findSearch( @RequestBody Map searchMap){
+        return new Response(true,StatusCode.OK,"查询成功",categoryService.findSearch(searchMap));
     }
 	
 	/**
 	 * 增加
 	 * @param category
 	 */
+	@ApiOperation(value = "增加分类", notes = "")
 	@RequestMapping(method=RequestMethod.POST)
-	public Result add(@RequestBody Category category  ){
+	public Response add(@RequestBody Category category  ){
 		categoryService.add(category);
-		return new Result(true,StatusCode.OK,"增加成功");
+		return new Response(true,StatusCode.OK,"增加成功");
 	}
 	
 	/**
 	 * 修改
 	 * @param category
 	 */
+	@ApiOperation(value = "修改分类", notes = "")
+	@ApiImplicitParam(name = "id", value = "需要修改的id",required = true,dataType = "Integer",paramType = "path")
 	@RequestMapping(value="/{id}",method= RequestMethod.PUT)
-	public Result update(@RequestBody Category category, @PathVariable String id ){
+	public Response update(@RequestBody Category category, @PathVariable Integer id ){
 		category.setId(id);
 		categoryService.update(category);		
-		return new Result(true,StatusCode.OK,"修改成功");
+		return new Response(true,StatusCode.OK,"修改成功");
 	}
 	
 	/**
 	 * 删除
 	 * @param id
 	 */
+	@ApiOperation(value = "删除分类", notes = "")
+	@ApiImplicitParam(name = "id", value = "删除的分类id", required = true,dataType = "Integer",paramType = "path")
 	@RequestMapping(value="/{id}",method= RequestMethod.DELETE)
-	public Result delete(@PathVariable String id ){
+	public Response delete(@PathVariable Integer id ){
 		categoryService.deleteById(id);
-		return new Result(true,StatusCode.OK,"删除成功");
+		return new Response(true,StatusCode.OK,"删除成功");
 	}
 	
 }

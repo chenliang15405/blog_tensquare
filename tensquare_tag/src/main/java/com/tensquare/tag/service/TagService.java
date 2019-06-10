@@ -1,28 +1,22 @@
 package com.tensquare.tag.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
-
+import com.tensquare.common.utils.IdWorker;
+import com.tensquare.tag.dao.TagDao;
+import com.tensquare.tag.pojo.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import util.IdWorker;
-
-import com.tensquare.tag.dao.TagDao;
-import com.tensquare.tag.pojo.Tag;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 服务层
@@ -31,6 +25,7 @@ import com.tensquare.tag.pojo.Tag;
  *
  */
 @Service
+@Transactional
 public class TagService {
 
 	@Autowired
@@ -77,7 +72,7 @@ public class TagService {
 	 * @param id
 	 * @return
 	 */
-	public Tag findById(String id) {
+	public Tag findById(Integer id) {
 		return tagDao.findById(id).get();
 	}
 
@@ -86,7 +81,7 @@ public class TagService {
 	 * @param tag
 	 */
 	public void add(Tag tag) {
-		tag.setId( idWorker.nextId()+"" );
+//		tag.setId( idWorker.nextId()+"" );
 		tagDao.save(tag);
 	}
 
@@ -102,7 +97,7 @@ public class TagService {
 	 * 删除
 	 * @param id
 	 */
-	public void deleteById(String id) {
+	public void deleteById(Integer id) {
 		tagDao.deleteById(id);
 	}
 

@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.tensquare.blog.user.dao.UserDao;
 import com.tensquare.blog.user.entity.User;
 import com.tensquare.common.utils.IdWorker;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

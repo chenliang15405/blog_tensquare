@@ -1,11 +1,11 @@
 server: 
-  port: 9001
+  port: 9004
 spring: 
   application:  
     name: tensquare-tag #指定服务名
   datasource:  
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://132.232.104.247:3306/tensquare_tag?useUnicode=true&amp;characterEncoding=UTF8
+    url: jdbc:mysql://132.232.104.247:3306/tensquare_tag?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
     username: root
     password: root
   jpa: 

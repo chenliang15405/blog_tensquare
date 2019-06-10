@@ -9,6 +9,6 @@ import com.tensquare.tag.pojo.Tag;
  * @author Administrator
  *
  */
-public interface TagDao extends JpaRepository<Tag,String>,JpaSpecificationExecutor<Tag>{
+public interface TagDao extends JpaRepository<Tag,Integer>,JpaSpecificationExecutor<Tag>{
 	
 }

@@ -9,6 +9,6 @@ import com.tensquare.category.pojo.Category;
  * @author Administrator
  *
  */
-public interface CategoryDao extends JpaRepository<Category,String>,JpaSpecificationExecutor<Category>{
+public interface CategoryDao extends JpaRepository<Category,Integer>,JpaSpecificationExecutor<Category>{
 	
 }
