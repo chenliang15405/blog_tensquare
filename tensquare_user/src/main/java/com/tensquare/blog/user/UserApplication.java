@@ -4,6 +4,7 @@ import com.tensquare.common.utils.IdWorker;
 import com.tensquare.common.utils.JwtUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -12,9 +13,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @auther alan.chen
  * @time 2019/6/1 6:07 PM
  */
-
-@SpringBootApplication
+@EnableEurekaClient
 @EnableSwagger2
+@SpringBootApplication
 public class UserApplication {
 
     public static void main(String[] args) {

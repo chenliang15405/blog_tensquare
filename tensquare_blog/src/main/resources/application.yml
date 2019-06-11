@@ -11,3 +11,10 @@ spring:
   jpa: 
     database: MySQL
     show-sql: true
+# eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:6868/eureka/
+  instance: # 开启ip注册，不开启，则使用服务名称注册
+    prefer-ip-address: true

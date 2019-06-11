@@ -28,7 +28,11 @@ public class ArticleController {
 
 	@Autowired
 	private ArticleService articleService;
-	
+
+
+	/*
+	*  TODO 点赞 可以用 redis控制不能重复点赞， 评论和点赞都是通过mq进行处理，快速返回结果给用户
+	* */
 	
 	/**
 	 * 查询全部数据

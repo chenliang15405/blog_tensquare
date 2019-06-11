@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  * 对于spring security的统一没有权限的403信息处理类
  * TODO 后面可以将403重定向到页面
- * TODO 后面可以将token 放入到redis中管理
+ * TODO 后面可以将token 放入到redis中管理，过期的设置
  *
  * @auther alan.chen
  * @time 2019/6/8 6:26 PM
