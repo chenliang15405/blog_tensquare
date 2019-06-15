@@ -8,8 +8,13 @@ import com.tensquare.blog.pojo.Article;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.utils.IdWorker;
 import com.tensquare.common.vo.CategoryVo;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,10 +25,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 服务层
@@ -31,6 +33,7 @@ import java.util.Optional;
  * @author Administrator
  *
  */
+@Slf4j
 @Service
 @Transactional
 public class ArticleService {
@@ -47,6 +50,21 @@ public class ArticleService {
 	@Autowired
 	private CategoryClient categoryClient;
 
+
+
+	/**
+	 * 点赞
+	 * @param articleId
+	 */
+	public void thumbup(String articleId) {
+		// 使用mq实现点赞，1. 防止高并发 2. 可以将点赞数量再存储到redis中方便查询
+		try {
+			//生产者指定exchange 与 routing-key 就可以发送到指定的queue
+			rabbitTemplate.convertAndSend("blog_thumbup", "thumbup", articleId);
+		} catch (AmqpException e) {
+			log.error("点赞出现异常", e);
+		}
+	}
 
 	/**
 	 * 查询全部列表
@@ -86,6 +104,7 @@ public class ArticleService {
 	 * @param id
 	 * @return
 	 */
+	@Cacheable(value = "article:pojo", key = "#id")
 	public Article findById(String id) {
 		// 需要对optional进行判断，如果不判断，则optional可能为null，报错 no such elementException
 		Optional<Article> optional = articleDao.findById(id);
@@ -101,6 +120,13 @@ public class ArticleService {
 		handleCategory(article); // java中的值传递和引用传递问题，虽然是值传递，但是传递的是对象的引用，所以可以改变对象属性的址值
 
 		article.setId( idWorker.nextId()+"" );
+		article.setComment(0);
+		if(StringUtils.isBlank(article.getState())) {
+			article.setState("0");
+		}
+		article.setThumbup(0);
+		article.setCreatetime(new Date());
+		article.setVisits(0);
 		articleDao.save(article);
 	}
 
@@ -108,6 +134,9 @@ public class ArticleService {
 	 * 修改
 	 * @param article
 	 */
+	// TODO cacheput 不能查询到数据
+//	@CachePut(value = "article:pojo", key = "#article.id")
+	@CacheEvict(value = "article:pojo", key = "#id")
 	public void update(Article article) {
 		// 先判断是否已经存在该分类，如果不存在，则保存一个，如果存在，则使用该分类id
 		// 通过mq异步保存一个新的分类
@@ -142,6 +171,7 @@ public class ArticleService {
 	 * 删除
 	 * @param id
 	 */
+	@CacheEvict(value = "article:pojo", key = "#id")
 	public void deleteById(String id) {
 		articleDao.deleteById(id);
 	}

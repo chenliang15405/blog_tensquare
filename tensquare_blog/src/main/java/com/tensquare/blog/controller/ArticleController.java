@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.tensquare.blog.client.CategoryClient;
 import com.tensquare.blog.pojo.Article;
 import com.tensquare.blog.service.ArticleService;
+import com.tensquare.blog.utils.RedisUtil;
 import com.tensquare.common.entity.PageResponse;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.entity.StatusCode;
@@ -12,6 +13,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,7 @@ import java.util.Map;
  *
  * @author Administrator
  */
+@Slf4j
 @RestController
 @CrossOrigin
 @RequestMapping("/article")
@@ -35,15 +39,21 @@ public class ArticleController {
     @Autowired
     private CategoryClient categoryClient;
 
+    @Autowired
+    private RedisUtil redisUtil;
 
-    /*
-     *  TODO 点赞 可以用 redis控制不能重复点赞， 评论和点赞都是通过mq进行处理，快速返回结果给用户
-     * */
 
+    /**
+     * 文章点赞，通过返回flag控制文章是否已经点赞过，页面中判断
+     * @param articleId
+     * @return
+     */
+    @ApiOperation(value = "文章点赞", notes = "")
+    @ApiImplicitParam(name = "articleId", value = "文章id", required = true, dataType = "String", paramType = "path")
     @RequestMapping(value = "/thumbup/{articleId}", method = RequestMethod.PUT)
     public Response thumbup(@PathVariable String articleId) {
         articleService.thumbup(articleId);
-        return new Response(true, StatusCode.OK, "点赞成功");
+        return new Response(true, StatusCode.OK, "点赞成功","done_thumbup");
     }
 
 
@@ -78,8 +88,10 @@ public class ArticleController {
     public Response findById(@PathVariable String id) {
         Article article = articleService.findById(id);
         //获取分类名称
-        String categoryName = getCategoryNameWithFeign(article.getCategoryid());
-        article.setCategoryName(categoryName);
+        if(article != null) {
+            String categoryName = getCategoryNameWithFeign(article.getCategoryid());
+            article.setCategoryName(categoryName);
+        }
         return new Response(true, StatusCode.OK, "查询成功", article);
     }
 
@@ -175,6 +187,8 @@ public class ArticleController {
     /**
      * 根据categoryid，调用feign获取category name
      *
+     * 根据redis中查询数据，将分类存储到redis中
+     *
      * @param id
      * @return
      */
@@ -182,10 +196,18 @@ public class ArticleController {
         if (id == null) {
             return null;
         }
+        String name = redisUtil.get("article:category:" + id);
+        if(StringUtils.isNotBlank(name)) {
+            return name;
+        }
         Response resp = categoryClient.findById(id);
         Object o = JSON.toJSON(resp.getData());
         CategoryVo categoryVo = JSON.parseObject(o.toString(), CategoryVo.class);
-        return categoryVo.getCategoryname();
+        String categoryname = categoryVo.getCategoryname();
+        if(StringUtils.isNotBlank(categoryname)) {
+            redisUtil.set("article:category:" + id, categoryname);
+        }
+        return categoryname;
     }
 
 

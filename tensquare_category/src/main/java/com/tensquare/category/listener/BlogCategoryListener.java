@@ -3,6 +3,7 @@ package com.tensquare.category.listener;
 import com.tensquare.category.dao.CategoryDao;
 import com.tensquare.category.pojo.Category;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,14 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-@RabbitListener(queues = "blog_category")//指定queue的名称，这个名称暂时是在132.232.104.247:15672中创建的队列名称,username:guest password:guest
+// @RabbitListener(queues = "blog_category") //指定queue的名称，这个名称暂时是在132.232.104.247:15672中创建的队列名称,username:guest password:guest
+@RabbitListener(queuesToDeclare = @Queue("blog_category")) // 可以通过queuesToDeclare 自动创建队列
 public class BlogCategoryListener {
 
     @Autowired
     private CategoryDao categoryDao;
 
+//    @RabbitListener(queuesToDeclare = @Queue("blog_category")) 可以直接加方法上
     @RabbitHandler
     public void blogCategoryHandler(Map<String,String> map) {
         log.info("BlogCategoryListener: queues=[blog_category]: 分类id : {}, 分类名称 : {}", map.get("categoryId"),map.get("categoryName"));
