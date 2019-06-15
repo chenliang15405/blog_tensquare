@@ -15,6 +15,7 @@
         <module>tensquare_tag</module>
         <module>security_demo</module>
         <module>tensquare_eureka</module>
+        <module>tensquare_manager</module>
     </modules>
     <packaging>pom</packaging>
 
