@@ -5,12 +5,23 @@ spring:
     name: tensquare-blog #指定服务名
   datasource:  
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://132.232.104.247:3306/tensquare_article?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://132.232.104.247:3306/tensquare_blog?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
     username: root
     password: root
   jpa: 
     database: MySQL
     show-sql: true
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+  #rabbitmq
+  rabbitmq:
+    host: 132.232.104.247
+  # console 输出彩色日志
+  output:
+    ansi:
+      enabled: always
 # eureka
 eureka:
   client:
@@ -18,3 +29,11 @@ eureka:
       defaultZone: http://127.0.0.1:6868/eureka/
   instance: # 开启ip注册，不开启，则使用服务名称注册
     prefer-ip-address: true
+# 配置feign的熔断器 hystrix
+feign:
+  hystrix:
+    enabled: true
+# 配置feign的链接超时时间，feign底层用的是ribbon，feign调用分为2层，一层是ribbon,一层是hystrix
+ribbon:
+  ReadTimeout: 120000
+  ConnectionTimeOut: 30000

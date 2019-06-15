@@ -33,7 +33,8 @@ public class Article implements Serializable{
 	private Integer thumbup;//点赞数
 	private Integer comment;//评论数
 	private String state;//审核状态
-	private Integer categorylid;//所属类型
+	private String categoryid;//所属类型
+	private String categoryName;//标签名称
 	private String url;//URL
 	private String type;//类型（原创、转载、翻译）
 	private String tag;//标签名称

@@ -1,8 +1,14 @@
 package com.tensquare.blog.service;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Maps;
+import com.tensquare.blog.client.CategoryClient;
 import com.tensquare.blog.dao.ArticleDao;
 import com.tensquare.blog.pojo.Article;
+import com.tensquare.common.entity.Response;
 import com.tensquare.common.utils.IdWorker;
+import com.tensquare.common.vo.CategoryVo;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +23,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 服务层
@@ -33,6 +40,13 @@ public class ArticleService {
 	
 	@Autowired
 	private IdWorker idWorker;
+
+	@Autowired
+	private RabbitTemplate rabbitTemplate;
+
+	@Autowired
+	private CategoryClient categoryClient;
+
 
 	/**
 	 * 查询全部列表
@@ -73,7 +87,9 @@ public class ArticleService {
 	 * @return
 	 */
 	public Article findById(String id) {
-		return articleDao.findById(id).get();
+		// 需要对optional进行判断，如果不判断，则optional可能为null，报错 no such elementException
+		Optional<Article> optional = articleDao.findById(id);
+		return optional.orElse(null);
 	}
 
 	/**
@@ -81,6 +97,9 @@ public class ArticleService {
 	 * @param article
 	 */
 	public void add(Article article) {
+		// 先查询是否存在该分类
+		handleCategory(article); // java中的值传递和引用传递问题，虽然是值传递，但是传递的是对象的引用，所以可以改变对象属性的址值
+
 		article.setId( idWorker.nextId()+"" );
 		articleDao.save(article);
 	}
@@ -90,8 +109,34 @@ public class ArticleService {
 	 * @param article
 	 */
 	public void update(Article article) {
+		// 先判断是否已经存在该分类，如果不存在，则保存一个，如果存在，则使用该分类id
+		// 通过mq异步保存一个新的分类
+		handleCategory(article);
 		articleDao.save(article);
 	}
+
+	/**
+	 * 处理分类
+	 * @param article
+	 */
+	private void handleCategory(Article article) {
+		Response response = categoryClient.findByCategoryname(article.getCategoryName());
+		if(response.getData() != null) {
+			Object o = JSON.toJSON(response.getData());
+			CategoryVo categoryVo = JSON.parseObject(o.toString(), CategoryVo.class);
+			article.setCategoryid(categoryVo.getId());
+		} else {
+			String categoryId = idWorker.nextId() + "";
+			Map<String, String> map = Maps.newHashMap();
+			map.put("categoryName", article.getCategoryName());
+			map.put("categoryId", categoryId);
+
+			// 通过mq异步发送消息到 category 服务
+			rabbitTemplate.convertAndSend("blog_category", map);
+			article.setCategoryid(categoryId);
+		}
+	}
+
 
 	/**
 	 * 删除

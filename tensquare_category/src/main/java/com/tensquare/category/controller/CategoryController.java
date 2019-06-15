@@ -48,8 +48,19 @@ public class CategoryController {
 	@ApiOperation(value = "通过id获取category信息", notes = "通过id获取category信息")
 	@ApiImplicitParam(name = "id", value = "需要查询的id",required = true,dataType = "Integer",paramType = "path")
 	@RequestMapping(value="/{id}",method= RequestMethod.GET)
-	public Response findById(@PathVariable Integer id){
+	public Response findById(@PathVariable String id){
 		return new Response(true,StatusCode.OK,"查询成功",categoryService.findById(id));
+	}
+
+	/**
+	 * 通过名称查询
+	 * @param categoryname
+	 * @return
+	 */
+	@ApiOperation(value = "通过id获取category信息", notes = "通过categoryname获取category信息")
+	@RequestMapping(value = "/feign/{categoryname}",method = RequestMethod.GET)
+	public Response findByCategoryname(@PathVariable String categoryname) {
+		return new Response(true,StatusCode.OK,"查询成功",categoryService.findByCategoryname(categoryname));
 	}
 
 
@@ -102,7 +113,7 @@ public class CategoryController {
 	@ApiOperation(value = "修改分类", notes = "")
 	@ApiImplicitParam(name = "id", value = "需要修改的id",required = true,dataType = "Integer",paramType = "path")
 	@RequestMapping(value="/{id}",method= RequestMethod.PUT)
-	public Response update(@RequestBody Category category, @PathVariable Integer id ){
+	public Response update(@RequestBody Category category, @PathVariable String id ){
 		category.setId(id);
 		categoryService.update(category);		
 		return new Response(true,StatusCode.OK,"修改成功");
@@ -115,7 +126,7 @@ public class CategoryController {
 	@ApiOperation(value = "删除分类", notes = "")
 	@ApiImplicitParam(name = "id", value = "删除的分类id", required = true,dataType = "Integer",paramType = "path")
 	@RequestMapping(value="/{id}",method= RequestMethod.DELETE)
-	public Response delete(@PathVariable Integer id ){
+	public Response delete(@PathVariable String id ){
 		categoryService.deleteById(id);
 		return new Response(true,StatusCode.OK,"删除成功");
 	}

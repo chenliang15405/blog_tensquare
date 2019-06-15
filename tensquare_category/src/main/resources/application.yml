@@ -11,6 +11,8 @@ spring:
   jpa: 
     database: MySQL
     show-sql: true
+  rabbitmq:
+    host: 132.232.104.247
 # eureka
 eureka:
   client:

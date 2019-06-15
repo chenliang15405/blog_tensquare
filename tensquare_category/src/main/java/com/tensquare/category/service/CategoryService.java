@@ -14,9 +14,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 服务层
@@ -68,12 +66,25 @@ public class CategoryService {
 	}
 
 	/**
+	 *  根据分类名称查询
+	 *
+	 * @param categoryName
+	 * @return
+	 */
+	public Category findByCategoryname(String categoryName) {
+		// mysql默认查询不区分大小写
+		List<Category> list = categoryDao.findByCategoryname(categoryName);
+		return list != null? list.get(0) : null;
+	}
+
+	/**
 	 * 根据ID查询实体
 	 * @param id
 	 * @return
 	 */
-	public Category findById(Integer id) {
-		return categoryDao.findById(id).get();
+	public Category findById(String id) {
+		Optional<Category> optional = categoryDao.findById(id);
+		return optional.isPresent()? optional.get(): null;
 	}
 
 	/**
@@ -81,7 +92,10 @@ public class CategoryService {
 	 * @param category
 	 */
 	public void add(Category category) {
-//		category.setId( idWorker.nextId()+"" );
+		category.setId( idWorker.nextId()+"" );
+		category.setCreatedate(new Date());
+		category.setCount(0L);
+		category.setState("0");
 		categoryDao.save(category);
 	}
 
@@ -97,7 +111,7 @@ public class CategoryService {
 	 * 删除
 	 * @param id
 	 */
-	public void deleteById(Integer id) {
+	public void deleteById(String id) {
 		categoryDao.deleteById(id);
 	}
 
