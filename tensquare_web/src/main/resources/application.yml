@@ -1,16 +1,15 @@
 server:
-  port: 9010
+  port: 9011
 spring:
   application:
-    name: tensquare-manager #指定服务名
+    name: tensquare-web #指定服务名
 eureka:
   client:
     service-url:
       defaultZone: http://127.0.0.1:6868/eureka/
   instance:
     prefer-ip-address: true
-# 配置网关路由
-zuul:
+zuul:  #配置前端服务网关规则
   routes:
     tensquare-blog: # 文章, 这个是标示，需要唯一
       path: /article/**  # 配置请求的URL规则, 访问的前面都要加上 /route-key/ + /aritlce/1
