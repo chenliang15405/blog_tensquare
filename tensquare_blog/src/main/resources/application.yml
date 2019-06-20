@@ -27,6 +27,10 @@ spring:
   output:
     ansi:
       enabled: always
+  servlet: # 2.x 使用 servlet 1.5 使用 http
+    multipart:
+      max-file-size: 100MB # 最大支持文件大小
+      max-request-size: 100MB # 最大支持请求大小
 # eureka
 eureka:
   client:
@@ -53,3 +57,17 @@ feign:
 #    MaxAutoRetriesNextServer: 1 #重试负载均衡其他的实例最大重试次数,不包括首次调用
 #    OkToRetryOnAllOperations: false  #是否所有操作都重试
 # 配置feign的链接超时时间，feign底层用的是ribbon，feign调用分为2层，一层是ribbon,一层是hystrix
+
+# 分布式文件系统fastdfs配置
+fdfs:
+  pool:
+    max-total: 153     # 从池中借出的对象的最大数目
+    max-wait-millis: 102  # 获取连接时的最大等待毫秒数100
+  thumbImage: # 缩略图生成参数，可选
+    width: 150
+    height: 150
+  web-server-url: http://132.232.104.247:9999/
+  connect-timeout: 600
+  so-timeout: 5000
+  tracker-list:
+    - 132.232.104.247:22122
