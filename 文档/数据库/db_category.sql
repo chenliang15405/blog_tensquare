@@ -13,13 +13,18 @@ CREATE TABLE `tb_category` (
   `count` bigint(20) DEFAULT NULL COMMENT '使用数量',
   `createdate` date default null comment '创建时间',
   `userid` varchar(20) default null comment '创建人',
-  `description` varchar(100) default null comment '描述'
+  `description` varchar(100) default null comment '描述',
+  `color` varchar(50) default null comment '颜色'
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='分类';
 
 
-insert  into `tb_category`(`id`,`categoryname`,`state`,`count`,`createdate`,`userid`,`description`) values
-('1','java','1',NULL,NULL,NULL,NULL),
-('2','PHP','1',NULL,NULL,NULL,NULL),
-('3','C++','1',NULL,NULL,NULL,NULL),
-('4','python','1',NULL,NULL,NULL,NULL);
+INSERT INTO `tb_category` VALUES ('1', 'java', '1', NULL, NULL, NULL, NULL, 'd876e3');
+INSERT INTO `tb_category` VALUES ('1142309021223620608', '前端', '0', 0, '2019-06-22', NULL, NULL, 'c4426b');
+INSERT INTO `tb_category` VALUES ('1142309252610789376', '服务器', '0', 0, '2019-06-22', NULL, NULL, 'E52446');
+INSERT INTO `tb_category` VALUES ('2', 'PHP', '0', NULL, NULL, NULL, NULL, 'E52446');
+INSERT INTO `tb_category` VALUES ('3', 'C++', '0', NULL, NULL, NULL, NULL, '5631ea');
+INSERT INTO `tb_category` VALUES ('4', 'python', '0', NULL, NULL, NULL, NULL, '9ff931');
+INSERT INTO `tb_category` VALUES ('5', 'JS', '0', NULL, NULL, NULL, NULL, '25F0DA');
+INSERT INTO `tb_category` VALUES ('6', '数据库', '0', NULL, NULL, NULL, NULL, '64A58A');
+
 

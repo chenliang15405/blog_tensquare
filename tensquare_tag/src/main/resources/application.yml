@@ -5,9 +5,9 @@ spring:
     name: tensquare-tag #指定服务名
   datasource:  
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://132.232.104.247:3306/tensquare_tag?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://132.232.104.247:3306/tensquare_label?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: '!QAZ2wsx'
   jpa: 
     database: MySQL
     show-sql: true

@@ -2,7 +2,7 @@ package com.tensquare.tag.service;
 
 import com.tensquare.common.utils.IdWorker;
 import com.tensquare.tag.dao.TagDao;
-import com.tensquare.tag.pojo.Tag;
+import com.tensquare.tag.pojo.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +38,7 @@ public class TagService {
 	 * 查询全部列表
 	 * @return
 	 */
-	public List<Tag> findAll() {
+	public List<Label> findAll() {
 		return tagDao.findAll();
 	}
 
@@ -50,8 +50,8 @@ public class TagService {
 	 * @param size
 	 * @return
 	 */
-	public Page<Tag> findSearch(Map whereMap, int page, int size) {
-		Specification<Tag> specification = createSpecification(whereMap);
+	public Page<Label> findSearch(Map whereMap, int page, int size) {
+		Specification<Label> specification = createSpecification(whereMap);
 		PageRequest pageRequest =  PageRequest.of(page-1, size);
 		return tagDao.findAll(specification, pageRequest);
 	}
@@ -62,8 +62,8 @@ public class TagService {
 	 * @param whereMap
 	 * @return
 	 */
-	public List<Tag> findSearch(Map whereMap) {
-		Specification<Tag> specification = createSpecification(whereMap);
+	public List<Label> findSearch(Map whereMap) {
+		Specification<Label> specification = createSpecification(whereMap);
 		return tagDao.findAll(specification);
 	}
 
@@ -72,7 +72,7 @@ public class TagService {
 	 * @param id
 	 * @return
 	 */
-	public Tag findById(Integer id) {
+	public Label findById(Integer id) {
 		return tagDao.findById(id).get();
 	}
 
@@ -80,7 +80,7 @@ public class TagService {
 	 * 增加
 	 * @param tag
 	 */
-	public void add(Tag tag) {
+	public void add(Label tag) {
 //		tag.setId( idWorker.nextId()+"" );
 		tagDao.save(tag);
 	}
@@ -89,7 +89,7 @@ public class TagService {
 	 * 修改
 	 * @param tag
 	 */
-	public void update(Tag tag) {
+	public void update(Label tag) {
 		tagDao.save(tag);
 	}
 
@@ -106,16 +106,16 @@ public class TagService {
 	 * @param searchMap
 	 * @return
 	 */
-	private Specification<Tag> createSpecification(Map searchMap) {
+	private Specification<Label> createSpecification(Map searchMap) {
 
-		return new Specification<Tag>() {
+		return new Specification<Label>() {
 
 			@Override
-			public Predicate toPredicate(Root<Tag> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+			public Predicate toPredicate(Root<Label> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				List<Predicate> predicateList = new ArrayList<Predicate>();
                 // 标签名称
-                if (searchMap.get("tagname")!=null && !"".equals(searchMap.get("tagname"))) {
-                	predicateList.add(cb.like(root.get("tagname").as(String.class), "%"+(String)searchMap.get("tagname")+"%"));
+                if (searchMap.get("labelname")!=null && !"".equals(searchMap.get("labelname"))) {
+                	predicateList.add(cb.like(root.get("labelname").as(String.class), "%"+(String)searchMap.get("labelname")+"%"));
                 }
                 // 状态
                 if (searchMap.get("state")!=null && !"".equals(searchMap.get("state"))) {

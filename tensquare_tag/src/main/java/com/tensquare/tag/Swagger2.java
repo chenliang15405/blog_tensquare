@@ -34,7 +34,7 @@ public class Swagger2 {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 //页面标题
-                .title("The Tag Of Tensquare_Blog")
+                .title("The Label Of Tensquare_Blog")
                 //描述
                 .description("接口文档")
                 //创建人

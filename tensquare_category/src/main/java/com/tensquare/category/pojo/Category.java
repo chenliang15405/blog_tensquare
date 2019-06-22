@@ -23,5 +23,6 @@ public class Category implements Serializable{
 	private java.util.Date createdate;//创建时间
 	private String userid;//创建人
 	private String description;//描述
+	private String color; //颜色
 
 }

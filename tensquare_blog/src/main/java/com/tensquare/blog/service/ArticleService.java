@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -34,8 +35,8 @@ import java.util.*;
  *
  */
 @Slf4j
-@Service
-@Transactional
+@Service //如果类加了这个注解，那么这个类里面的方法抛出异常，就会回滚，如果不配置rollbackFor属性,那么事物只会在遇到RuntimeException的时候才会回滚,加上rollbackFor=Exception.class,可以让事物在遇到非运行时异常时也回滚
+@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED) // 支持当前事务，如果当前没有事务，就新建一个事务
 public class ArticleService {
 
 	@Autowired
@@ -120,13 +121,13 @@ public class ArticleService {
 		handleCategory(article); // java中的值传递和引用传递问题，虽然是值传递，但是传递的是对象的引用，所以可以改变对象属性的址值
 
 		article.setId( idWorker.nextId()+"" );
-		article.setComment(0);
+		article.setComment(article.getComment() == null? 0 : article.getComment());
 		if(StringUtils.isBlank(article.getState())) {
 			article.setState("0");
 		}
-		article.setThumbup(0);
+		article.setThumbup(article.getThumbup() == null? 0 : article.getThumbup());
 		article.setCreatetime(new Date());
-		article.setVisits(0);
+		article.setVisits(article.getVisits() == null ? 0 : article.getVisits());
 		articleDao.save(article);
 	}
 
@@ -229,13 +230,13 @@ public class ArticleService {
                 	predicateList.add(cb.like(root.get("type").as(String.class), "%"+(String)searchMap.get("type")+"%"));
                 }
                 // 标签名称
-                if (searchMap.get("tag")!=null && !"".equals(searchMap.get("tag"))) {
+                /*if (searchMap.get("tag")!=null && !"".equals(searchMap.get("tag"))) {
                 	predicateList.add(cb.like(root.get("tag").as(String.class), "%"+(String)searchMap.get("tag")+"%"));
-                }
+                }*/
                 // 标签颜色
-                if (searchMap.get("tagcolor")!=null && !"".equals(searchMap.get("tagcolor"))) {
+                /*if (searchMap.get("tagcolor")!=null && !"".equals(searchMap.get("tagcolor"))) {
                 	predicateList.add(cb.like(root.get("tagcolor").as(String.class), "%"+(String)searchMap.get("tagcolor")+"%"));
-                }
+                }*/
 				
 				return cb.and( predicateList.toArray(new Predicate[predicateList.size()]));
 

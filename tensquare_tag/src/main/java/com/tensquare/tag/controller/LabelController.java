@@ -3,8 +3,10 @@ package com.tensquare.tag.controller;
 import com.tensquare.common.entity.PageResponse;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.entity.StatusCode;
-import com.tensquare.tag.pojo.Tag;
+import com.tensquare.tag.pojo.Label;
+import com.tensquare.tag.service.LabelBlogService;
 import com.tensquare.tag.service.TagService;
+import com.tensquare.tag.vo.LabelBlogVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 /**
  * 控制器层
@@ -21,14 +24,30 @@ import java.util.Map;
  */
 @RestController
 @CrossOrigin
-@RequestMapping("/tag")
+@RequestMapping("/label")
 @Api(tags = "标签Controller")
-public class TagController {
+public class LabelController {
 
 	@Autowired
 	private TagService tagService;
-	
-	
+
+	@Autowired
+	private LabelBlogService labelBlogService;
+
+
+	/**
+	 * 查询博客和标签关联的数据
+	 * @param blogId
+	 * @return
+	 */
+	@ApiOperation(value = "根据博客id查询关联的标签",notes = "")
+	@ApiImplicitParam(name = "blogId", value = "需要查询的blogId",required = true,dataType = "String",paramType = "path")
+	@RequestMapping(value = "/blog/{blogId}", method = RequestMethod.GET)
+	public Response findLabelsByBlogId(@PathVariable String blogId) {
+		List<LabelBlogVo> list = labelBlogService.findByBlogId(blogId);
+		return new Response(true, StatusCode.OK, "查询成功",list);
+	}
+
 	/**
 	 * 查询全部数据
 	 * @return
@@ -61,14 +80,14 @@ public class TagController {
 	 */
 	@ApiOperation(value = "分页条件查询", notes = "分页条件查询")
 	@ApiImplicitParams({
-			@ApiImplicitParam(name = "searchMap", value = "查询条件", required = true,dataType = "Tag", dataTypeClass = Tag.class),
+			@ApiImplicitParam(name = "searchMap", value = "查询条件", required = true,dataType = "Label", dataTypeClass = Label.class),
 			@ApiImplicitParam(name = "page", value = "当前页", required = true, dataType = "int",paramType = "path"),
 			@ApiImplicitParam(name = "size", value = "每页条数", required = true, dataType = "int",paramType = "path")
 	})
 	@RequestMapping(value="/search/{page}/{size}",method=RequestMethod.POST)
 	public Response findSearch(@RequestBody Map searchMap , @PathVariable int page, @PathVariable int size){
-		Page<Tag> pageList = tagService.findSearch(searchMap, page, size);
-		return  new Response(true,StatusCode.OK,"查询成功",  new PageResponse<Tag>(pageList.getTotalElements(), pageList.getContent()) );
+		Page<Label> pageList = tagService.findSearch(searchMap, page, size);
+		return  new Response(true,StatusCode.OK,"查询成功",  new PageResponse<Label>(pageList.getTotalElements(), pageList.getContent()) );
 	}
 
 	/**
@@ -77,7 +96,7 @@ public class TagController {
      * @return
      */
 	@ApiOperation(value = "条件查询", notes = "条件查询")
-	@ApiImplicitParam(name = "searchMap", value = "查询条件", required = true, dataType = "Tag",dataTypeClass = Tag.class)
+	@ApiImplicitParam(name = "searchMap", value = "查询条件", required = true, dataType = "Label",dataTypeClass = Label.class)
 	@RequestMapping(value="/search",method = RequestMethod.POST)
     public Response findSearch( @RequestBody Map searchMap){
         return new Response(true,StatusCode.OK,"查询成功",tagService.findSearch(searchMap));
@@ -85,25 +104,25 @@ public class TagController {
 	
 	/**
 	 * 增加
-	 * @param tag
+	 * @param label
 	 */
 	@ApiOperation(value = "增加标签", notes = "")
 	@RequestMapping(method=RequestMethod.POST)
-	public Response add(@RequestBody Tag tag  ){
-		tagService.add(tag);
+	public Response add(@RequestBody Label label  ){
+		tagService.add(label);
 		return new Response(true,StatusCode.OK,"增加成功");
 	}
 	
 	/**
 	 * 修改
-	 * @param tag
+	 * @param label
 	 */
 	@ApiOperation(value = "修改标签", notes = "")
 	@ApiImplicitParam(name = "id", value = "需要修改的id",required = true,dataType = "Integer",paramType = "path")
 	@RequestMapping(value="/{id}",method= RequestMethod.PUT)
-	public Response update(@RequestBody Tag tag, @PathVariable Integer id ){
-		tag.setId(id);
-		tagService.update(tag);
+	public Response update(@RequestBody Label label, @PathVariable Integer id ){
+		label.setId(id);
+		tagService.update(label);
 		return new Response(true,StatusCode.OK,"修改成功");
 	}
 	
