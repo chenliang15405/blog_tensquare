@@ -17,6 +17,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -89,7 +90,18 @@ public class ArticleService {
 		return articleDao.findAll(specification, pageRequest);
 	}
 
-	
+	/**
+	 * 归档（时间）列表查询
+	 * @param pageSize
+	 * @return
+	 */
+	public Page<Article> findArticleArchiveList(Integer page, Integer pageSize) {
+		// 分页查询数据，并根据createDate排序
+		Sort sort = new Sort(Sort.Direction.DESC,"createtime");
+		PageRequest pageRequest = PageRequest.of(page-1, pageSize, sort);
+		return articleDao.findAll(pageRequest);
+	}
+
 	/**
 	 * 条件查询
 	 * @param whereMap

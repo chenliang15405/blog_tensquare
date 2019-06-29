@@ -1,5 +1,6 @@
 package com.tensquare.blog.client;
 
+import com.tensquare.blog.client.impl.CategoryClientImpl;
 import com.tensquare.common.entity.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;

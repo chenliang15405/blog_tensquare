@@ -1,10 +1,13 @@
 package com.tensquare.blog.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import com.tensquare.blog.client.CategoryClient;
+import com.tensquare.blog.client.UserClient;
 import com.tensquare.blog.pojo.Article;
 import com.tensquare.blog.service.ArticleService;
 import com.tensquare.blog.utils.RedisUtil;
+import com.tensquare.blog.vo.ArticleArchiveRespVo;
 import com.tensquare.common.entity.PageResponse;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.entity.StatusCode;
@@ -15,6 +18,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +42,15 @@ public class ArticleController {
     private ArticleService articleService;
     @Autowired
     private CategoryClient categoryClient;
+    @Autowired
+    private UserClient userClient;
 
     @Autowired
     private RedisUtil redisUtil;
+
+
+    private final String ARCHIVE_USER_INFO_KEY = "article:archive:user:";
+    private final String ARTICLE_CATEGORY_KEY = "article:category:";
 
 
     /**
@@ -95,6 +105,23 @@ public class ArticleController {
         return new Response(true, StatusCode.OK, "查询成功", article);
     }
 
+    /**
+     * 博客归档（时间）列表查询
+     *
+     * @param pageSize
+     * @return
+     */
+    @ApiOperation(value = "归档列表查询", notes = "归档列表查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "当前页", required = true, dataType = "int", paramType = "path"),
+            @ApiImplicitParam(name = "pageSize", value = "每次加载的列表条数", required = true, dataType = "int", paramType = "path")
+    })
+    @RequestMapping(value = "/archive/{page}/{pageSize}")
+    public Response findArticleArchiveList(@PathVariable Integer page, @PathVariable Integer pageSize) {
+        Page<Article> list = articleService.findArticleArchiveList(page,pageSize);
+        List<ArticleArchiveRespVo> resp = transferToArchiveRespVo(list.getContent());
+        return new Response(true, StatusCode.OK, "查询成功",new PageResponse<>(list.getTotalElements(),resp));
+    }
 
     /**
      * 分页+多条件查询
@@ -196,7 +223,7 @@ public class ArticleController {
         if (id == null) {
             return null;
         }
-        String name = redisUtil.get("article:category:" + id);
+        String name = redisUtil.get(ARTICLE_CATEGORY_KEY + id);
         if(StringUtils.isNotBlank(name)) {
             log.info("根据id: {} ,从缓存中get categoryname : {}",id,name);
             return name;
@@ -207,11 +234,53 @@ public class ArticleController {
         String categoryname = categoryVo.getCategoryname();
         if(StringUtils.isNotBlank(categoryname)) {
             log.info("将id: {} ,category: {}  存储到redis中：",id,categoryname);
-            redisUtil.set("article:category:" + id, categoryname);
+            redisUtil.set(ARTICLE_CATEGORY_KEY + id, categoryname);
         }
         return categoryname;
     }
 
+    /**
+     * 封装文章归档对象
+     * @return
+     */
+    private List<ArticleArchiveRespVo> transferToArchiveRespVo(List<Article> list) {
+        List<ArticleArchiveRespVo> resp = Lists.newArrayList();
+        if(list != null && list.size() > 0) {
+            list.forEach(item -> {
+                ArticleArchiveRespVo vo = new ArticleArchiveRespVo();
+                // copy 属性
+                BeanUtils.copyProperties(item, vo);
+                // 获取user头像
+                String userid = item.getUserid();
+                String redisData = redisUtil.get(ARCHIVE_USER_INFO_KEY + userid);
+                if(StringUtils.isNotBlank(redisData)) {
+                    log.info("从缓存中查询到数据，直接解析: {}",redisData);
+                    // 直接解析存储的json字符串
+                    Map<String,String> map = (Map<String, String>) JSON.parse(redisData);
+                    vo.setAvatar(map.get("avatar"));
+                } else {
+                    log.info("调用User服务，开始查询文章用户信息: [{}]",userid);
+                    Response response = userClient.getUserById(userid);
+                    if(response.getData() != null){
+                        // 保存到缓存中
+                        log.info("保存文章的user信息到缓存中: {}",response.getData());
+                        // 将对象等必须转换为json格式再存储到redis中，否则json的格式不对
+                        Object o = JSON.toJSON(response.getData());
+                        redisUtil.set(ARCHIVE_USER_INFO_KEY + userid, String.valueOf(o));
+                        Object json = JSON.toJSON(response.getData());
+                        Map<String,String> map = (Map<String, String>) JSON.parse(String.valueOf(json));
+                        vo.setAvatar(map.get("avatar"));
+                    }
+                }
+                // 获取文章的分类：
+                String categoryName = getCategoryNameWithFeign(item.getCategoryid());
+                vo.setCategoryName(categoryName);
+
+                resp.add(vo);
+            });
+        }
+        return resp;
+    }
 
 
 }

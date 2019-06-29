@@ -73,7 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-ui.html").anonymous()
                 .antMatchers("/swagger-resources/**").anonymous()
                 .antMatchers("/webjars/**").anonymous()
-                .antMatchers("/*/api-docs").anonymous()
+                .antMatchers("/**/api-docs").anonymous()
                 // swagger end
                 .anyRequest().permitAll()
                 .and()

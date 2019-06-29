@@ -50,6 +50,11 @@ feign:
           isolation:
             thread:
               timeoutInMilliseconds: 10000
+ribbon: # 配置ribbon
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+  MaxAutoRetries: 2
+  MaxAutoRetriesNextServer: 1
 #  ribbon:
 #    ReadTimeout: 3000
 #    ConnectTimeout: 5000

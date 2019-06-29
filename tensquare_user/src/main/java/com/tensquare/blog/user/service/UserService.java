@@ -3,6 +3,7 @@ package com.tensquare.blog.user.service;
 import com.google.common.collect.Lists;
 import com.tensquare.blog.user.dao.UserDao;
 import com.tensquare.blog.user.entity.User;
+import com.tensquare.blog.user.utils.RedisUtil;
 import com.tensquare.common.utils.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import javax.persistence.criteria.Root;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @auther alan.chen
@@ -39,6 +41,11 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
+    private final String ARCHIVE_USER_INFO_KEY = "article:archive:user:";
+
 
     /**
      * 根据id查询
@@ -46,8 +53,9 @@ public class UserService {
      * @param id
      * @return
      */
-    public Object findById(String id) {
-        return userDao.findById(id);
+    public User findById(String id) {
+        Optional<User> optional = userDao.findById(id);
+        return optional.orElse(null);
     }
 
     /**
@@ -108,6 +116,7 @@ public class UserService {
      * @param user
      */
     public void updateById(User user) {
+        redisUtil.delete(ARCHIVE_USER_INFO_KEY + user.getId());
         userDao.save(user);
     }
 
@@ -116,6 +125,7 @@ public class UserService {
      * @param id
      */
     public void deleteById(String id) {
+        redisUtil.delete(ARCHIVE_USER_INFO_KEY + id);
         // TODO 判断是否有admin角色，否则不能删除
         // throw new RuntimeException("权限不足")
         userDao.deleteById(id);

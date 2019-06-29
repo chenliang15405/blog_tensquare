@@ -18,6 +18,11 @@ spring:
       hibernate:
         hbm2ddl:
           auto: update
+  redis:
+    host: 132.232.104.247
+    port: 6379
+    password: admin # 默认为空
+    database: 0 # 默认也是使用 database=0
 #jwt配置
 jwt:
   config:

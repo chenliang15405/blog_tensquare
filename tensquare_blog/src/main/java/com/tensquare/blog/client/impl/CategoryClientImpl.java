@@ -1,5 +1,6 @@
-package com.tensquare.blog.client;
+package com.tensquare.blog.client.impl;
 
+import com.tensquare.blog.client.CategoryClient;
 import com.tensquare.common.entity.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class CategoryClientImpl implements CategoryClient{
+public class CategoryClientImpl implements CategoryClient {
 
 
     @Override
