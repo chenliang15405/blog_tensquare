@@ -1,10 +1,16 @@
 package com.tensquare.blog.user;
 
+import com.tensquare.blog.user.entity.AdminUser;
+import com.tensquare.blog.user.service.AdminUserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
 
@@ -12,7 +18,12 @@ import java.util.Date;
  * @auther alan.chen
  * @time 2019/6/7 5:38 PM
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class CreateJwtTest {
+
+    @Autowired
+    private AdminUserService adminUserService;
 
     @Test
     public void createJwt() {
@@ -89,4 +100,15 @@ public class CreateJwtTest {
         System.out.println("自定义role : " + claims.get("roles"));
         System.out.println("自定义logo :" + claims.get("logo"));
     }
+
+    @Test
+    public void testAdmin() {
+        AdminUser adminUser = new AdminUser();
+        adminUser.setLoginname("adminn");
+        adminUser.setPassword("admin");
+        adminUser.setEmail("admin@admin.com");
+        adminUser.setUsername("admin");
+        adminUserService.add(adminUser);
+    }
+
 }

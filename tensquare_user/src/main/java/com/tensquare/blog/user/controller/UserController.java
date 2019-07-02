@@ -1,11 +1,15 @@
 package com.tensquare.blog.user.controller;
 
 import com.tensquare.blog.user.entity.User;
+import com.tensquare.blog.user.service.AdminUserService;
 import com.tensquare.blog.user.service.UserService;
 import com.tensquare.common.entity.PageResponse;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.entity.StatusCode;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +28,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private AdminUserService adminUserService;
 
     /**
      * 根据 id 查询user
@@ -50,6 +55,16 @@ public class UserController {
         return new Response(true, StatusCode.OK, "查询成功", userService.findAll());
     }
 
+    /**
+     * 查询admin的信息
+     *
+     * @return
+     */
+    @ApiOperation(value = "查询admin数据", notes = "查询admin的信息")
+    @RequestMapping(value = "/admin", method = RequestMethod.GET)
+    public Response getAdminUserInfo() {
+        return new Response(true, StatusCode.OK, "查询成功", adminUserService.findBloggerInfo());
+    }
 
     /**
      * 分页条件查询

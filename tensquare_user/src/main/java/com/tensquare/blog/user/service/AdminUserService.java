@@ -3,7 +3,9 @@ package com.tensquare.blog.user.service;
 import com.tensquare.blog.user.dao.AdminUserDao;
 import com.tensquare.blog.user.entity.AdminUser;
 import com.tensquare.blog.user.entity.JwtUser;
+import com.tensquare.blog.user.vo.BloggerVo;
 import com.tensquare.common.utils.IdWorker;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -89,6 +91,17 @@ public class AdminUserService implements UserDetailsService {
         return adminUserDao.findAll();
     }
 
+    /**
+     * 查询admin信息
+     *
+     * @return
+     */
+    public BloggerVo findBloggerInfo() {
+        AdminUser adminUser = adminUserDao.findBloggerInfo();
+        BloggerVo bloggerVo = new BloggerVo();
+        BeanUtils.copyProperties(adminUser, bloggerVo);
+        return bloggerVo;
+    }
 
     /**
      * 条件查询+分页

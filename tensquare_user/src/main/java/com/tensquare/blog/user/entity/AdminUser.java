@@ -32,6 +32,9 @@ public class AdminUser implements Serializable {
     private String avatar; // 头像
     private String address;   // 地址
     private String loginSite; //登录地点
-    private String  email;  //邮箱
+    private String email;  //邮箱
+    private String blogger; // 是否为博主，Y or N
+    private String motto; // 座右铭
+    private String title; // title
 
 }

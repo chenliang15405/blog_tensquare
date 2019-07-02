@@ -37,10 +37,13 @@ CREATE TABLE `tb_admin` (
   `address` varchar(100)  DEFAULT NULL COMMENT '地址',
   `login_site` varchar(100)  DEFAULT NULL COMMENT '登录地点',
   `email` varchar(100)  DEFAULT NULL COMMENT '邮箱',
+  `blogger` varchar(10) DEFAULT NULL COMMENT '是否为博主，展示前端',
+  `motto` varchar(100) DEFAULT NULL COMMENT '座右铭',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='管理员';
 
 /*Data for the table `tb_admin` */
+INSERT INTO `tb_admin` VALUES ('1145697086432481280', 'ROLE_ADMIN', 'admin', 'admin', '$2a$10$02/AZy8iiDMnOZHFfGJXb.lj6GisT.FaR9WuGBB3lOaprezR453QK', '0', NULL, '2019-07-01', NULL, NULL, NULL, 'http://u.thsi.cn/imgsrc/sns/3ba262255b32a428a3e0b44cce35d3ee_259_346.jpg', NULL, NULL, 'admin@admin.com', 'Y', '一枚小码匠');
 
 /*Table structure for table `tb_follow` */
 
@@ -86,6 +89,9 @@ CREATE TABLE `tb_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户';
 
 /*Data for the table `tb_user` */
+INSERT INTO `tb_user` VALUES ('1', '1', 'admin@qq.com', '小明', 'http://u.thsi.cn/imgsrc/sns/3ba262255b32a428a3e0b44cce35d3ee_259_346.jpg', NULL, NULL, NULL, 1, 'java', '190000993', 'admin', '1', '2019-06-29 11:38:05', NULL, 99, NULL, NULL, NULL, NULL);
+INSERT INTO `tb_user` VALUES ('2', '0', 'test1@qq.com', '天线', 'http://b-ssl.duitang.com/uploads/item/201810/27/20181027203954_wiwop.jpg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `tb_user` VALUES ('3', '1', 'man@man.com', '小红', 'http://u.thsi.cn/imgsrc/sns/3ba262255b32a428a3e0b44cce35d3ee_259_346.jpg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
