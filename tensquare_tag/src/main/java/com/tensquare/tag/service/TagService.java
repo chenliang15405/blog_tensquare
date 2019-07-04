@@ -56,6 +56,13 @@ public class TagService {
 		return tagDao.findAll(specification, pageRequest);
 	}
 
+	public Label findByName(String name) {
+		List<Label> list = tagDao.findByName(name);
+		if(list.size()>0) {
+			return list.get(0);
+		}
+		return null;
+	}
 	
 	/**
 	 * 条件查询
@@ -78,11 +85,11 @@ public class TagService {
 
 	/**
 	 * 增加
-	 * @param tag
+	 * @param label
 	 */
-	public void add(Label tag) {
+	public Label add(Label label) {
 //		tag.setId( idWorker.nextId()+"" );
-		tagDao.save(tag);
+		return tagDao.save(label);
 	}
 
 	/**

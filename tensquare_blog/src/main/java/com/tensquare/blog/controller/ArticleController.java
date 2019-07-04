@@ -8,6 +8,7 @@ import com.tensquare.blog.pojo.Article;
 import com.tensquare.blog.service.ArticleService;
 import com.tensquare.blog.utils.RedisUtil;
 import com.tensquare.blog.vo.ArticleArchiveRespVo;
+import com.tensquare.blog.vo.ArticleReqVo;
 import com.tensquare.common.entity.PageResponse;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.entity.StatusCode;
@@ -111,12 +112,12 @@ public class ArticleController {
      * @param pageSize
      * @return
      */
-    @ApiOperation(value = "归档列表查询", notes = "归档列表查询")
+    @ApiOperation(value = "归档列表查询", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", value = "当前页", required = true, dataType = "int", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每次加载的列表条数", required = true, dataType = "int", paramType = "path")
     })
-    @RequestMapping(value = "/archive/{page}/{pageSize}")
+    @RequestMapping(value = "/archive/{page}/{pageSize}", method = RequestMethod.GET)
     public Response findArticleArchiveList(@PathVariable Integer page, @PathVariable Integer pageSize) {
         Page<Article> list = articleService.findArticleArchiveList(page,pageSize);
         List<ArticleArchiveRespVo> resp = transferToArchiveRespVo(list.getContent());
@@ -178,7 +179,7 @@ public class ArticleController {
      */
     @ApiOperation(value = "增加文章", notes = "")
     @RequestMapping(method = RequestMethod.POST)
-    public Response add(@RequestBody Article article) {
+    public Response add(@RequestBody ArticleReqVo article) {
         articleService.add(article);
         return new Response(true, StatusCode.OK, "增加成功");
     }
@@ -191,7 +192,7 @@ public class ArticleController {
     @ApiOperation(value = "修改文章", notes = "")
     @ApiImplicitParam(name = "id", value = "需要修改的id", required = true, dataType = "String", paramType = "path")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public Response update(@RequestBody Article article, @PathVariable String id) {
+    public Response update(@RequestBody ArticleReqVo article, @PathVariable String id) {
         article.setId(id);
         articleService.update(article);
         return new Response(true, StatusCode.OK, "修改成功");

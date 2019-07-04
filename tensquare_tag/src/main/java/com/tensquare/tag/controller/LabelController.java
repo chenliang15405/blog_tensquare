@@ -1,5 +1,6 @@
 package com.tensquare.tag.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.tensquare.common.entity.PageResponse;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.entity.StatusCode;
@@ -47,6 +48,23 @@ public class LabelController {
 		List<LabelBlogVo> list = labelBlogService.findByBlogId(blogId);
 		return new Response(true, StatusCode.OK, "查询成功",list);
 	}
+
+	/**
+	 * 处理博客和标签的关联
+	 * @param
+	 * @return
+	 */
+	@ApiOperation(value = "根据博客id查询关联的标签",notes = "")
+	@RequestMapping(value = "/feign", method = RequestMethod.POST)
+	public Response handleArticleLabel(@RequestBody String json) {
+		// 解析传递的数据
+		Map<String,Object> map = (Map<String, Object>) JSON.parse(json);
+		String blogId = (String) map.get("blogId");
+		List<String> tagList = JSON.parseArray(map.get("tagList").toString(), String.class);
+		String flag = labelBlogService.save(blogId, tagList);
+		return new Response(true, StatusCode.OK, "保存成功");
+	}
+
 
 	/**
 	 * 查询全部数据

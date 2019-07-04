@@ -53,5 +53,50 @@ public class LabelBlogService {
 		return voList;
 	}
 
+	/**
+	 * 保存博客和标签的关联
+	 * @param blogId
+	 * @param tagList
+	 * @return
+	 */
+	public String save(String blogId, List<String> tagList) {
+		try {
+			List<LabelBlog> list = Lists.newArrayList();
+			// 循环保存
+			//  先查询是否有这个labelName，如果有返回id，如果没有，保存之后，在保存进中间表
+			List<Integer> tagIds = hanleTagList(tagList);
+			if(tagIds.size() > 0) {
+				tagIds.forEach(id -> {
+					LabelBlog labelBlog = new LabelBlog();
+					labelBlog.setBlogid(blogId);
+					labelBlog.setLabelid(id);
+					list.add(labelBlog);
+				});
+				labelBlogDao.saveAll(list);
+			}
+			return "1";
+		} catch (Exception e) {
+			log.error("labelBlog save error", e);
+		}
+		return "0";
+	}
 
+	// 处理标签列表，查询是否存在该标签，如果存在，返回id，如果不存在，保存返回id
+	private List<Integer> hanleTagList(List<String> tagList) {
+		List<Integer> ids = Lists.newArrayList();
+		tagList.forEach(item -> {
+			Label label = tagService.findByName(item);
+			if(label != null) {
+				ids.add(label.getId());
+			} else {
+				Label label1 = new Label();
+				label1.setLabelname(item);
+				label1.setCount(0L);
+				label1.setState("1");
+				Integer id = tagService.add(label1).getId();
+				ids.add(id);
+			}
+		});
+		return ids;
+	}
 }

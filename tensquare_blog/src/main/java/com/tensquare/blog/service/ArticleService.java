@@ -3,8 +3,10 @@ package com.tensquare.blog.service;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.tensquare.blog.client.CategoryClient;
+import com.tensquare.blog.client.LabelClient;
 import com.tensquare.blog.dao.ArticleDao;
 import com.tensquare.blog.pojo.Article;
+import com.tensquare.blog.vo.ArticleReqVo;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.utils.IdWorker;
 import com.tensquare.common.vo.CategoryVo;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -52,7 +55,8 @@ public class ArticleService {
 	@Autowired
 	private CategoryClient categoryClient;
 
-
+	@Autowired
+	private LabelClient labelClient;
 
 	/**
 	 * 点赞
@@ -126,34 +130,46 @@ public class ArticleService {
 
 	/**
 	 * 增加
-	 * @param article
+	 * @param vo
 	 */
-	public void add(Article article) {
-		// 先查询是否存在该分类
-		handleCategory(article); // java中的值传递和引用传递问题，虽然是值传递，但是传递的是对象的引用，所以可以改变对象属性的址值
+	public void add(ArticleReqVo vo) {
+		Article article = new Article();
+		String blogId = idWorker.nextId()+"";
 
-		article.setId( idWorker.nextId()+"" );
-		article.setComment(article.getComment() == null? 0 : article.getComment());
+		// 先查询是否存在该分类
+		handleCategory(vo); // java中的值传递和引用传递问题，虽然是值传递，但是传递的是对象的引用，所以可以改变对象属性的址值
+		handleLabelList(blogId, vo);
+
+		// 在将vo copy到article中
+		BeanUtils.copyProperties(vo, article);
+
+		article.setId(blogId);
+		article.setComment(0);
 		if(StringUtils.isBlank(article.getState())) {
 			article.setState("0");
 		}
-		article.setThumbup(article.getThumbup() == null? 0 : article.getThumbup());
+		article.setThumbup(0);
 		article.setCreatetime(new Date());
-		article.setVisits(article.getVisits() == null ? 0 : article.getVisits());
+		article.setVisits(0);
 		articleDao.save(article);
 	}
 
 	/**
 	 * 修改
-	 * @param article
+	 * @param vo
 	 */
-	// TODO cacheput 不能查询到数据
+	// TODO cacheput 不能修改到数据
 //	@CachePut(value = "article:pojo", key = "#article.id")
-	@CacheEvict(value = "article:pojo", key = "#id")
-	public void update(Article article) {
+	@CacheEvict(value = "article:pojo", key = "#article.id")
+	public void update(ArticleReqVo vo) {
+		Article article = new Article();
 		// 先判断是否已经存在该分类，如果不存在，则保存一个，如果存在，则使用该分类id
 		// 通过mq异步保存一个新的分类
-		handleCategory(article);
+		handleCategory(vo);
+		// 处理标签
+		handleLabelList(vo.getId(), vo);
+		BeanUtils.copyProperties(vo, article);
+
 		articleDao.save(article);
 	}
 
@@ -161,7 +177,8 @@ public class ArticleService {
 	 * 处理分类
 	 * @param article
 	 */
-	private void handleCategory(Article article) {
+	private void handleCategory(ArticleReqVo article) {
+		// TODO 后期重新写, 直接调用一次，如果没有查询到，则保存，如果查询到，则返回id
 		Response response = categoryClient.findByCategoryname(article.getCategoryName());
 		if(response.getData() != null) {
 			Object o = JSON.toJSON(response.getData());
@@ -178,6 +195,26 @@ public class ArticleService {
 			article.setCategoryid(categoryId);
 		}
 	}
+
+	/**
+	 * 处理文章对应的标签列表
+	 * @param vo
+	 */
+	 private void handleLabelList(String blogId, ArticleReqVo vo) {
+		 try {
+			 if(vo != null) {
+				List<String> list = vo.getLabelList();
+				// 将list传递到tag服务
+				Map<String,Object> map = Maps.newHashMap();
+				map.put("blogId", blogId);
+				map.put("tagList", list);
+				String json = JSON.toJSONString(map);
+				labelClient.handleArticleLabel(json);
+			}
+		 } catch (Exception e) {
+			 log.error("handleTagList error ", e);
+		 }
+	 }
 
 
 	/**

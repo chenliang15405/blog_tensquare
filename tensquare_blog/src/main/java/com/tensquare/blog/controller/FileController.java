@@ -50,6 +50,8 @@ public class FileController {
         try {
             String path = fileUtil.uploadFile(file);
             log.info("上传file: {} , 上传fastdfs返回的路径: {}", file.getOriginalFilename(), path);
+            // 将path组装好返回前端
+
             return new Response(true, StatusCode.OK, "上传文件成功", path);
         } catch (IOException e) {
             log.error("上传文件到fastdfsa失败", e);
