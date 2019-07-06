@@ -18,6 +18,7 @@ public class ArticleArchiveRespVo {
 	private String title;//标题
 	private String summary;//摘要
 	private String content;//文章正文
+	private String textcontent; // 文章文本
 	private String image;//文章封面图url
 	private java.util.Date createtime;//发表日期
 	private java.util.Date updatetime;//修改日期

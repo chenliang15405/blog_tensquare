@@ -67,8 +67,6 @@ public class ArticleController {
         return new Response(true, StatusCode.OK, "点赞成功","done_thumbup");
     }
 
-
-
     /**
      * 查询全部数据
      *

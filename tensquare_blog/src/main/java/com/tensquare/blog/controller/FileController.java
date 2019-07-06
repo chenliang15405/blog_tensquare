@@ -1,6 +1,8 @@
 package com.tensquare.blog.controller;
 
 import com.github.tobato.fastdfs.domain.MataData;
+import com.tensquare.blog.pojo.Images;
+import com.tensquare.blog.service.ImageFileService;
 import com.tensquare.blog.utils.CommonFileUtil;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.entity.StatusCode;
@@ -8,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,10 +35,14 @@ import java.util.Set;
 @RequestMapping("/file")
 public class FileController {
 
+    @Value("${fdfs.web-server-url}")
+    private String FASTDFS_WEB_SERVER_URL;
 
     @Autowired
     private CommonFileUtil fileUtil;
 
+    @Autowired
+    private ImageFileService imageFileService;
 
     /**
      * 上传文件或者图片到fastdfs
@@ -49,10 +57,21 @@ public class FileController {
         log.info("开始上传文件到fastdfs");
         try {
             String path = fileUtil.uploadFile(file);
-            log.info("上传file: {} , 上传fastdfs返回的路径: {}", file.getOriginalFilename(), path);
             // 将path组装好返回前端
+            String visitPath = FASTDFS_WEB_SERVER_URL + path;
+            log.info("上传file: {} , 上传fastdfs返回的路径: {}", file.getOriginalFilename(), path);
 
-            return new Response(true, StatusCode.OK, "上传文件成功", path);
+            // 存储到数据库中
+            Images image = new Images();
+            image.setCreateTime(new Date());
+            image.setImageName(path.substring(path.lastIndexOf("/")).replace("/", ""));
+            image.setImageOriginName(file.getOriginalFilename());
+            image.setImagePath(path);
+            image.setPath(visitPath);
+
+            imageFileService.save(image);
+
+            return new Response(true, StatusCode.OK, "上传文件成功", visitPath);
         } catch (IOException e) {
             log.error("上传文件到fastdfsa失败", e);
         }
@@ -74,11 +93,23 @@ public class FileController {
         try {
             //上传，如果不设置文件信息，直接填入null
             String path = fileUtil.uploadImage(file.getInputStream(), file.getSize(), FilenameUtils.getExtension(file.getOriginalFilename()), mataData);
-            return new Response(true, StatusCode.OK, "上传成功", path);
+            log.info("上传缩略图file: {} , 上传fastdfs返回的路径: {}", file.getOriginalFilename(), path);
+            // 封装完整路径
+            String visitPath = FASTDFS_WEB_SERVER_URL + path;
+
+            Images image = new Images();
+            image.setCreateTime(new Date());
+            image.setImageName(path.substring(path.lastIndexOf("/")).replace("/", ""));
+            image.setImageOriginName(file.getOriginalFilename());
+            image.setImagePath(path);
+            image.setPath(visitPath);
+
+            imageFileService.save(image);
+
+            return new Response(true, StatusCode.OK, "上传成功", visitPath);
         } catch (IOException e) {
             log.error("上传图片失败", e);
         }
-
         return new Response(false, StatusCode.ERROR, "上传失败");
     }
 
@@ -98,6 +129,7 @@ public class FileController {
     @DeleteMapping("/delete")
     public Response deleteFile(@RequestParam String filePath) {
         try {
+            filePath = filePath.replace(FASTDFS_WEB_SERVER_URL, "");
             log.info("删除的文件路径：{}" , filePath);
             fileUtil.deleteFile(filePath);
             return new Response(true, StatusCode.OK, "删除成功");

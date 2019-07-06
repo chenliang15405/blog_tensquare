@@ -4,6 +4,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
+
 /**
  * 实体类
  * @author Administrator
@@ -24,9 +26,12 @@ public class Article implements Serializable{
 	@Lob // 申明属性对应的数据库字段为一个大文本类
 	@Basic(fetch = FetchType.LAZY)	//	大数据字段最好再加上延迟加载
 	private String content;//文章正文
+	@Lob
+	@Basic(fetch = FetchType.LAZY)
+	private String textcontent; // 文章纯文本
 	private String image;//文章封面图url
-	private java.util.Date createtime;//发表日期
-	private java.util.Date updatetime;//修改日期
+	private Date createtime;//发表日期
+	private Date updatetime;//修改日期
 	private String ispublic;//是否公开
 	private String istop;//是否置顶
 	private Integer visits;//浏览量

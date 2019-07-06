@@ -21,7 +21,7 @@ public class FastDFSUtilTest {
 
     @Test
     public void testDelete() {
-        fileUtil.deleteFile("group1/M00/00/00/rBsACV0HuJOAC3AyAAhct7uzQqU236.jpg");
+        fileUtil.deleteFile("group1/M00/00/00/rBsACV0gTnyAZv86AANKaIY5CUs897.png");
     }
 
 

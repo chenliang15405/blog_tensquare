@@ -16,6 +16,7 @@ import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -57,6 +58,11 @@ public class ArticleService {
 
 	@Autowired
 	private LabelClient labelClient;
+
+	@Value("${blog.web-server-url}")
+	private String BLOG_WEB_SERVER_URL;
+
+
 
 	/**
 	 * 点赞
@@ -137,7 +143,9 @@ public class ArticleService {
 		String blogId = idWorker.nextId()+"";
 
 		// 先查询是否存在该分类
-		handleCategory(vo); // java中的值传递和引用传递问题，虽然是值传递，但是传递的是对象的引用，所以可以改变对象属性的址值
+		if(StringUtils.isBlank(vo.getCategoryid())) {
+			handleCategory(vo); // java中的值传递和引用传递问题，虽然是值传递，但是传递的是对象的引用，所以可以改变对象属性的址值
+		}
 		handleLabelList(blogId, vo);
 
 		// 在将vo copy到article中
@@ -145,12 +153,15 @@ public class ArticleService {
 
 		article.setId(blogId);
 		article.setComment(0);
-		if(StringUtils.isBlank(article.getState())) {
-			article.setState("0");
-		}
+		article.setState(StringUtils.isBlank(vo.getState()) ? "0" : vo.getState());
 		article.setThumbup(0);
 		article.setCreatetime(new Date());
 		article.setVisits(0);
+		article.setIstop(StringUtils.isBlank(vo.getIstop()) ? "0" : vo.getIstop());
+		article.setIspublic(vo.isIspublic() ? "0" : "1"); // 1：公开  0：私密文章
+		article.setUrl(BLOG_WEB_SERVER_URL + blogId);
+		article.setType(StringUtils.isBlank(vo.getType()) ? "0" : vo.getType());
+
 		articleDao.save(article);
 	}
 
@@ -179,20 +190,22 @@ public class ArticleService {
 	 */
 	private void handleCategory(ArticleReqVo article) {
 		// TODO 后期重新写, 直接调用一次，如果没有查询到，则保存，如果查询到，则返回id
-		Response response = categoryClient.findByCategoryname(article.getCategoryName());
-		if(response.getData() != null) {
-			Object o = JSON.toJSON(response.getData());
-			CategoryVo categoryVo = JSON.parseObject(o.toString(), CategoryVo.class);
-			article.setCategoryid(categoryVo.getId());
-		} else {
-			String categoryId = idWorker.nextId() + "";
-			Map<String, String> map = Maps.newHashMap();
-			map.put("categoryName", article.getCategoryName());
-			map.put("categoryId", categoryId);
+		if(StringUtils.isNotBlank(article.getCategoryName())) {
+			Response response = categoryClient.findByCategoryname(article.getCategoryName());
+			if(response.getData() != null) {
+				Object o = JSON.toJSON(response.getData());
+				CategoryVo categoryVo = JSON.parseObject(o.toString(), CategoryVo.class);
+				article.setCategoryid(categoryVo.getId());
+			} else {
+				String categoryId = idWorker.nextId() + "";
+				Map<String, String> map = Maps.newHashMap();
+				map.put("categoryName", article.getCategoryName());
+				map.put("categoryId", categoryId);
 
-			// 通过mq异步发送消息到 category 服务
-			rabbitTemplate.convertAndSend("blog_category", map);
-			article.setCategoryid(categoryId);
+				// 通过mq异步发送消息到 category 服务
+				rabbitTemplate.convertAndSend("blog_category", map);
+				article.setCategoryid(categoryId);
+			}
 		}
 	}
 

@@ -76,3 +76,7 @@ fdfs:
   so-timeout: 5000
   tracker-list:
     - 132.232.104.247:22122
+
+# 博客展示页面的server-url
+blog:
+  web-server-url: http://132.232.104.247/#/blog/
