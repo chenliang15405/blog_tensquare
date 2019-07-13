@@ -104,6 +104,18 @@ public class AdminUserService implements UserDetailsService {
     }
 
     /**
+     * 根据username查询信息
+     * @param loginName
+     * @return
+     */
+    public BloggerVo findByLoginname(String loginName) {
+        AdminUser adminuser = adminUserDao.findByLoginname(loginName);
+        BloggerVo bloggerVo = new BloggerVo();
+        BeanUtils.copyProperties(adminuser, bloggerVo);
+        return bloggerVo;
+    }
+
+    /**
      * 条件查询+分页
      *
      * @param whereMap

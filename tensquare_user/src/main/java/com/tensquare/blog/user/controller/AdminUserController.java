@@ -84,6 +84,20 @@ public class AdminUserController {
         return new Response(true, StatusCode.OK, "查询成功", adminUserService.findById(id));
     }
 
+    /**
+     * 根据管理员名称查询信息
+     * @param loginname
+     * @return
+     */
+    @ApiOperation(value = "根据loginname查询管理员信息")
+    @ApiImplicitParam(name = "loginname", value = "管理员loginname", required = true, dataType = "String", paramType = "path")
+    @RequestMapping(value = "/info/{loginname}", method = RequestMethod.GET)
+    public Response findByLoginname(@PathVariable String loginname) {
+        return new Response(true, StatusCode.OK, "查询成功", adminUserService.findByLoginname(loginname));
+    }
+
+
+
     /*
      * 分页+多条件查询
      * @param searchMap 查询条件封装

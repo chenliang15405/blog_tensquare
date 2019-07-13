@@ -40,7 +40,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
-        super.setFilterProcessesUrl("/admin/login");
+        super.setFilterProcessesUrl("/admin/login"); // 登录的api
     }
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -61,6 +61,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private JwtUtil jwtUtil = new JwtUtil();
 
 
+    /**
+     * 登录处理的认证的api
+     * @param request
+     * @param response
+     * @return
+     * @throws AuthenticationException
+     */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
@@ -119,7 +126,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     // 这是验证失败时候调用的方法
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        response.getWriter().write("authentication failed, reason: " + failed.getMessage());
+        log.info("认证失败，失败原因 ：{} ",  failed.getMessage());
+        // response.getWriter().write("authentication failed, reason: " + failed.getMessage());
+
+        // 封装为response的格式返回
+        Response resp = new Response(false, StatusCode.LONGINERROR, "认证失败", "authentication failed, reason: " + failed.getMessage());
+        String respMessage = mapper.writeValueAsString(resp);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(respMessage);
     }
 
 
