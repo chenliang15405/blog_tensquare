@@ -10,3 +10,5 @@ tensquare-blog
 - [ ] 资源获取api
 - [ ] jenkins
 - [ ] docker registry
+- [ ] spring cloud config配置中心
+- [ ] 评论模块
