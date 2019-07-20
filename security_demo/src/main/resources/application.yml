@@ -1,0 +1,5 @@
+server: 
+  port: 7070
+spring: 
+  application:  
+    name: tensquare-demo #指定服务名
