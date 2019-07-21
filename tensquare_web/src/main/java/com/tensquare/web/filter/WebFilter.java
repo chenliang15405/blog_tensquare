@@ -55,7 +55,7 @@ public class WebFilter extends ZuulFilter {
      */
     @Override
     public Object run() throws ZuulException {
-        log.info("经过web网关你过滤器");
+        log.info("经过web网关过滤器");
 
 
         // TODO web前端不需要访问 需要认证的请求，所以可以取消传递token

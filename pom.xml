@@ -17,6 +17,7 @@
         <module>tensquare_eureka</module>
         <module>tensquare_manager</module>
         <module>tensquare_web</module>
+        <module>tensquare_comment</module>
     </modules>
     <packaging>pom</packaging>
 

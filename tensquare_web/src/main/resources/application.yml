@@ -23,6 +23,9 @@ zuul:  #配置前端服务网关规则
     tensquare-user:
       path: /user/**
       serviceId: tensquare-user
+    tensquare-comment:
+      path: /comment/**
+      serviceId: tensquare-comment
   host:
     connect-timeout-millis: 60000
     socket-timeout-millis: 60000
