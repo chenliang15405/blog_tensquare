@@ -15,7 +15,10 @@ import java.util.Date;
 @Table(name = "tb_comment")
 public class Comment implements Serializable {
 
-	public static final Integer PUBLIC_STATUS = 1;
+	public static final Integer PASS_AUTH = 1; // 审核通过
+
+	public static final Integer NOT_PASS = 0; // 审核不通过
+
 
 	@Id
 	@Column(name = "id")

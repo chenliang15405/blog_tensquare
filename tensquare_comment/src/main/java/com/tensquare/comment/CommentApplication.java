@@ -1,10 +1,13 @@
 package com.tensquare.comment;
 
+import com.tensquare.common.utils.IdWorker;
+import com.tensquare.common.utils.IpAddressUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
@@ -24,4 +27,13 @@ public class CommentApplication {
 		SpringApplication.run(CommentApplication.class, args);
 	}
 
+	@Bean
+	public IdWorker idWorker() {
+		return new IdWorker(1,1);
+	}
+
+	@Bean
+	public IpAddressUtil ipAddressUtil() {
+		return new IpAddressUtil();
+	}
 }

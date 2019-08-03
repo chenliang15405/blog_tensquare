@@ -113,6 +113,17 @@ public class UserController {
     }
 
     /**
+     * 保存评论用户
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/comment/{id}", method = RequestMethod.POST)
+    public Response createCommentUser(@PathVariable("id") String id){
+        userService.createCommentUser(id);
+        return new Response(true, StatusCode.OK, "增加成功");
+    }
+
+    /**
      * 修改
      * @param user
      * @param id

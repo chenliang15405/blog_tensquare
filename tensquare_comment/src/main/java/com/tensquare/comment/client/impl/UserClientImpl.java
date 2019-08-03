@@ -20,4 +20,10 @@ public class UserClientImpl implements UserClient {
 		return new Response(false, StatusCode.REMOTEERROR, "调用User服务失败");
 	}
 
+	@Override
+	public Response createCommentUser(String id) {
+		log.error("UserClientImpl: createCommentUser(): [{}] : hystrix method start-------",id);
+		return new Response(false, StatusCode.REMOTEERROR, "调用User服务失败");
+	}
+
 }

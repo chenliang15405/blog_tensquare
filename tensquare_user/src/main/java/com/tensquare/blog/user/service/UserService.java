@@ -6,6 +6,7 @@ import com.tensquare.blog.user.entity.User;
 import com.tensquare.blog.user.utils.RedisUtil;
 import com.tensquare.common.utils.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -45,6 +46,11 @@ public class UserService {
     private RedisUtil redisUtil;
 
     private final String ARCHIVE_USER_INFO_KEY = "article:archive:user:";
+
+    @Value("${user.comment.default.nickName}")
+    private String nickName;
+    @Value("${user.comment.default.avatarUrl}")
+    private String avatarUrl;
 
 
     /**
@@ -108,6 +114,25 @@ public class UserService {
         user.setFollowme(NOT_FOLLOW_ME);
         user.setId(idWorker.nextId() + "");
 //        user.setPassword(encoder.encode(user.getPassword()));
+        userDao.save(user);
+    }
+
+    /**
+     * 创建评论用户
+     * TODO 目前是自动创建评论用户
+     * @param id
+     */
+    public void createCommentUser(String id) {
+        User user = new User();
+        user.setFanscount(0);
+        user.setFollowcount(0);
+        user.setLastdate(new Date());
+        user.setOnline(0L);
+        user.setRegdate(new Date());
+        user.setFollowme(NOT_FOLLOW_ME);
+        user.setId(id);
+        user.setNickname(nickName);
+        user.setAvatar(avatarUrl);
         userDao.save(user);
     }
 

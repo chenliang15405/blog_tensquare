@@ -11,6 +11,15 @@ spring:
   jpa: 
     database: MySQL
     show-sql: true
+  #rabbitmq
+  rabbitmq:
+    host: 132.232.104.247
+  #redis
+  redis:
+    host: 132.232.104.247
+    port: 6379
+    password: admin # 默认为空
+    database: 0 # 默认也是使用 database=0
 # eureka
 eureka:
   client:
@@ -35,3 +44,9 @@ ribbon: # 配置ribbon
   ConnectTimeout: 60000
   MaxAutoRetries: 2
   MaxAutoRetriesNextServer: 1
+
+# 其他配置
+comment:
+  user:
+    default:
+      userId: 00000000000000000001

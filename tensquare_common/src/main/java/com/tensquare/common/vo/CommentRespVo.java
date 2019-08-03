@@ -38,4 +38,6 @@ public class CommentRespVo {
 
 	private List<CommentRespVo> childrens; // 子评论列表
 
+	private String action; // 动作： 点赞/取消点赞
+
 }

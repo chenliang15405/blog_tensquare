@@ -33,12 +33,12 @@ CREATE TABLE `tb_comment` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id` varchar(20) DEFAULT NULL COMMENT '关联用户id',
   `parent_id` int(11) DEFAULT NULL COMMENT '关联父Id',
-  `blog_id` varchar(20) DEFAULT NULL COMMENT '博客id',,
+  `blog_id` varchar(20) DEFAULT NULL COMMENT '博客id',
   `content` text DEFAULT NULL COMMENT '评论内容',
   `like_num` int(11) DEFAULT NULL COMMENT '点赞数量',
   `dislike_num` int(11) DEFAULT NULL COMMENT '不喜欢数量',
   `comment_level` int(11) DEFAULT NULL COMMENT '评论层级: 0：第一层，1：第二层，2：第三层',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',,
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `status` int(11) DEFAULT NULL COMMENT '状态：1 审核通过 0 审核不通过',
   `type` int(11) DEFAULT NULL COMMENT '评论类型：0文章，1，阅读',
   PRIMARY KEY (`id`)
@@ -58,3 +58,16 @@ COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
+
+
+DROP TABLE IF EXISTS `tb_user_comment_favorite`;
+
+CREATE TABLE `tb_user_comment_favorite` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `comment_id` int(20) DEFAULT NULL COMMENT '关联评论id',
+  `user_id` varchar(20) DEFAULT NULL COMMENT '用户id',
+  `ip` varchar(20) DEFAULT NULL COMMENT '用户ip',
+  `action` varchar(20) DEFAULT NULL COMMENT '用户动作',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='用户评论点赞关联表';

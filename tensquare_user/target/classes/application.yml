@@ -35,3 +35,10 @@ eureka:
       defaultZone: http://127.0.0.1:6868/eureka/
   instance: # 开启ip注册，不开启，则使用服务名称注册
     prefer-ip-address: true
+
+# 其他配置
+user:
+  comment:
+    default:
+      nickName: Developmer
+      avatarUrl: http://u.thsi.cn/imgsrc/sns/3ba262255b32a428a3e0b44cce35d3ee_259_346.jpg

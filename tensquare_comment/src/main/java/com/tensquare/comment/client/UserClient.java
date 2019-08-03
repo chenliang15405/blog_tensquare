@@ -23,4 +23,13 @@ public interface UserClient {
 	 */
 	@RequestMapping(value = "/user/{id}",method = RequestMethod.GET)
 	public Response getUserById(@PathVariable("id") String id);
+
+	/**
+	 * 创建评论的用户
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/user/comment/{id}", method = RequestMethod.POST)
+	public Response createCommentUser(@PathVariable("id") String id);
+
 }

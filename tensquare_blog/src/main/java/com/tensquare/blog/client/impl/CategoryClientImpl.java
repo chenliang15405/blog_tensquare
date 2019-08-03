@@ -2,6 +2,7 @@ package com.tensquare.blog.client.impl;
 
 import com.tensquare.blog.client.CategoryClient;
 import com.tensquare.common.entity.Response;
+import com.tensquare.common.entity.StatusCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -19,18 +20,22 @@ public class CategoryClientImpl implements CategoryClient {
     @Override
     public Response findById(String id) {
         log.error("CategoryClient: findById(): hystrix start----");
-        throw new RuntimeException("CategoryClient: findByCategoryname(): hystrix start----");
+//        throw new RuntimeException("CategoryClient: findByCategoryname(): hystrix start----");
+        return new Response(false, StatusCode.REMOTEERROR, "调用Category服务失败");
     }
 
     @Override
     public Response save(String json) {
         log.error("CategoryClient: save(): hystrix start----");
-        throw new RuntimeException("CategoryClient: findByCategoryname(): hystrix start----");
+//        throw new RuntimeException("CategoryClient: findByCategoryname(): hystrix start----");
+        return new Response(false, StatusCode.REMOTEERROR, "调用Category服务失败");
     }
 
     @Override
     public Response findByCategoryname(String categoryname) {
         log.error("CategoryClient: findByCategoryname(): hystrix start----");
-        throw new RuntimeException("CategoryClient: findByCategoryname(): hystrix start----");
+//        throw new RuntimeException("CategoryClient: findByCategoryname(): hystrix start----");
+        return new Response(false, StatusCode.REMOTEERROR, "调用Category服务失败");
     }
+
 }

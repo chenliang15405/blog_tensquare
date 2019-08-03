@@ -222,18 +222,21 @@ public class ArticleController {
         if (id == null) {
             return null;
         }
-        String name = redisUtil.get(ARTICLE_CATEGORY_KEY + id);
-        if(StringUtils.isNotBlank(name)) {
-            log.info("根据id: {} ,从缓存中get categoryname : {}",id,name);
-            return name;
+        String categoryname = redisUtil.get(ARTICLE_CATEGORY_KEY + id);
+        if(StringUtils.isNotBlank(categoryname)) {
+            log.info("根据id: {} ,从缓存中get categoryname : {}", id, categoryname);
+            return categoryname;
         }
         Response resp = categoryClient.findById(id);
-        Object o = JSON.toJSON(resp.getData());
-        CategoryVo categoryVo = JSON.parseObject(String.valueOf(o), CategoryVo.class);
-        String categoryname = categoryVo.getCategoryname();
-        if(StringUtils.isNotBlank(categoryname)) {
-            log.info("将id: {} ,category: {}  存储到redis中：",id,categoryname);
-            redisUtil.set(ARTICLE_CATEGORY_KEY + id, categoryname);
+        if(resp != null && resp.getData() != null) {
+            String json = JSON.toJSONString(resp.getData());
+            CategoryVo categoryVo = JSON.parseObject(json, CategoryVo.class);
+            categoryname = categoryVo.getCategoryname();
+            if(StringUtils.isNotBlank(categoryname)) {
+                log.info("将id: {} ,category: {}  存储到redis中：",id,categoryname);
+                redisUtil.set(ARTICLE_CATEGORY_KEY + id, categoryname);
+            }
+            return categoryname;
         }
         return categoryname;
     }
