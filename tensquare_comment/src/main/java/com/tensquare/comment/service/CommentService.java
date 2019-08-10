@@ -15,6 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -58,8 +60,8 @@ public class CommentService {
 	@Value("${comment.user.default.userId}")
 	private String defaultUserId;
 
-	private static final String COMMENT_LIKE_NUM_KEY = "comments:like:num";
-	private static final String COMMENT_DISLIKE_NUM_KEY = "comments:dislike:num";
+	private static final String COMMENT_LIKE_NUM_KEY = "comment:like:num";
+	private static final String COMMENT_DISLIKE_NUM_KEY = "comment:dislike:num";
 
 	private static final String COMMENT_LIKE = "like";
 	private static final String COMMENT_DISLIKE = "dislike";
@@ -72,6 +74,7 @@ public class CommentService {
 	 * @param size
 	 * @return
 	 */
+	@Cacheable(value = "comment:page:list", key = "#blogId")
 	public Page<Comment> pageByBlogId(String blogId, int page, int size) {
 		Specification<Comment> specification = createSpecification(blogId);
 		Sort sort = new Sort(Sort.Direction.DESC, "createDate");
@@ -170,6 +173,7 @@ public class CommentService {
 	 * 保存评论
 	 * @param comment
 	 */
+	@CacheEvict(value = "comment:page:list", key = "#comment.getBlogId()")
 	public void save(Comment comment) {
 		comment.setCreateDate(new Date());
 		comment.setDislikeNum(0);
@@ -191,7 +195,9 @@ public class CommentService {
 		redisUtil.set(COMMENT_DISLIKE_NUM_KEY + id, 0);
 
 		//发送mq消息
+		log.info("【评论模块】新增评论发送MQ消息：Start");
 		sendMessageToBloger(comment.getUserId(), comment.getBlogId(), comment.getId());
+		log.info("【评论模块】新增评论发送MQ消息：End");
 	}
 
 
@@ -212,7 +218,7 @@ public class CommentService {
 	}
 
 	/**
-	 * 删除评论
+	 * 删除评论,TODO 删除缓存
 	 * @param id
 	 */
 	public void deleteById(Integer id) {

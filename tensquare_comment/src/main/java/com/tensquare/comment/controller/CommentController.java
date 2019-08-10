@@ -57,7 +57,7 @@ public class CommentController {
 
 
 	/**
-	 * 根据博客id查询对应的所有评论
+	 * 根据博客id查询对应的所有评论(分页查询，滚动无限加载)
 	 * @param blogId
 	 * @return
 	 */
@@ -103,7 +103,7 @@ public class CommentController {
 	}
 
 	/**
-	 * 删除
+	 * 删除, 需要带上评论对应的博客文章id
 	 * @param id
 	 */
 	@ApiOperation(value = "删除评论", notes = "")

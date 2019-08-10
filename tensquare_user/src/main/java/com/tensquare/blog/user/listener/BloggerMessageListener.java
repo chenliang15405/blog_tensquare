@@ -4,6 +4,7 @@ import com.tensquare.blog.user.entity.BloggerMessage;
 import com.tensquare.blog.user.service.BloggerMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class BloggerMessageListener {
 	@Autowired
 	private BloggerMessageService bloggerMessageService;
 
-	@RabbitListener
+	@RabbitHandler
 	public void handleBloggerMessage(Map<String, Object> map) {
 		log.info("[user_comment_message_channel]开始处理消息： {}", map);
 		// 将消息中数据保存数据库或者redis各一份
