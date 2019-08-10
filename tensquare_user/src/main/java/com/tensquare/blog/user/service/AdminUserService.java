@@ -5,6 +5,7 @@ import com.tensquare.blog.user.entity.AdminUser;
 import com.tensquare.blog.user.entity.JwtUser;
 import com.tensquare.blog.user.vo.BloggerVo;
 import com.tensquare.common.utils.IdWorker;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,10 +23,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *  amdin 管理服务， 如果使用的是spring security，则需要实现UserDetailsService，然后实现loadUserByUsername类，进行验证即可
@@ -96,11 +94,20 @@ public class AdminUserService implements UserDetailsService {
      *
      * @return
      */
-    public BloggerVo findBloggerInfo() {
-        AdminUser adminUser = adminUserDao.findBloggerInfo();
-        BloggerVo bloggerVo = new BloggerVo();
-        BeanUtils.copyProperties(adminUser, bloggerVo);
-        return bloggerVo;
+    public BloggerVo findBloggerInfo(String id) {
+        AdminUser adminUser = null;
+        if(StringUtils.isBlank(id)) {
+            adminUser = adminUserDao.findBloggerInfo();
+        } else {
+            Optional<AdminUser> optional = adminUserDao.findById(id);
+            adminUser = optional.orElse(null);
+        }
+        if(adminUser != null) {
+            BloggerVo bloggerVo = new BloggerVo();
+            BeanUtils.copyProperties(adminUser, bloggerVo);
+            return bloggerVo;
+        }
+        return null;
     }
 
     /**

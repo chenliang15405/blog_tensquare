@@ -56,14 +56,25 @@ public class UserController {
     }
 
     /**
-     * 查询admin的信息
+     * 查询admin的信息(可以跳过admin请求的校验)
+     * 查新的blogger=Y 的admin信息，可以通过后台切换blogger
      *
      * @return
      */
     @ApiOperation(value = "查询admin数据", notes = "查询admin的信息")
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
     public Response getAdminUserInfo() {
-        return new Response(true, StatusCode.OK, "查询成功", adminUserService.findBloggerInfo());
+        return new Response(true, StatusCode.OK, "查询成功", adminUserService.findBloggerInfo(null));
+    }
+
+    /**
+     * 根据admin_id查询admin信息，给博客展示使用（跳过校验）
+     * @return
+     */
+    @ApiOperation(value = "根据adminId查询admin数据", notes = "查询admin的信息")
+    @RequestMapping(value = "/admin/{id}", method = RequestMethod.GET)
+    public Response getAdminUserInfoById(@PathVariable("id") String id) {
+        return new Response(true, StatusCode.OK, "查询成功", adminUserService.findBloggerInfo(id));
     }
 
     /**

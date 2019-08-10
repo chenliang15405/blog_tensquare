@@ -21,6 +21,6 @@ public interface UserClient {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "/user/{id}",method = RequestMethod.GET)
+	@RequestMapping(value = "/user/admin",method = RequestMethod.GET)
 	public Response getUserById(@PathVariable("id") String id);
 }

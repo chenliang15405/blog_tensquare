@@ -45,7 +45,7 @@ path: 是上传文件之后返回的路径
 ------
 TODO 后面整理 springboot集成 fastdfs
 1. 两种pom依赖：
-```java
+```xml
 <dependency>
     <groupId>com.luhuiguo</groupId>
     <artifactId>fastdfs-spring-boot-starter</artifactId>
@@ -53,7 +53,7 @@ TODO 后面整理 springboot集成 fastdfs
 </dependency>
 ```
 
-```java
+```xml
 <dependency>
     <groupId>com.github.tobato</groupId>
     <artifactId>fastdfs-client</artifactId>
