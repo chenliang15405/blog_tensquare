@@ -61,7 +61,7 @@ public class CommentController {
 	 * @param blogId
 	 * @return
 	 */
-	@ApiOperation(value = "根据博客id分页查询", notes = "")
+	@ApiOperation(value = "根据评论id分页查询", notes = "")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "blogId", value = "博客id", required = true, dataType = "String",paramType = "path"),
 			@ApiImplicitParam(name = "page", value = "当前页", required = true, dataType = "int",paramType = "path"),
@@ -77,6 +77,17 @@ public class CommentController {
 			return new Response(true, StatusCode.OK, "查询成功", new PageResponse<CommentRespVo>(pageList.getTotalElements(), voList));
 		}
 		return new Response(false, StatusCode.ERROR, "blogId为空");
+	}
+
+	/**
+	 * 根据id查询
+	 * @return
+	 */
+	@ApiOperation(value = "根据评论id查询", notes = "")
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public Response findById(@PathVariable Integer id) {
+		Comment comment = commentService.findById(id);
+		return new Response(true, StatusCode.OK, "查询成功", comment);
 	}
 
 	/**

@@ -2,6 +2,8 @@ package com.tensquare.blog.user.controller;
 
 import com.tensquare.blog.user.entity.AdminUser;
 import com.tensquare.blog.user.service.AdminUserService;
+import com.tensquare.blog.user.service.BloggerMessageService;
+import com.tensquare.blog.user.vo.BloggerMessageVo;
 import com.tensquare.common.entity.PageResponse;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.entity.StatusCode;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +34,8 @@ public class AdminUserController {
 
     @Autowired
     private AdminUserService adminUserService;
+    @Autowired
+    private BloggerMessageService bloggerMessageService;
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -96,7 +101,16 @@ public class AdminUserController {
         return new Response(true, StatusCode.OK, "查询成功", adminUserService.findByLoginname(loginname));
     }
 
-
+    /**
+     * 查询通知博主的消息
+     * @return
+     */
+    @ApiOperation(value = "查询通知博主的消息")
+    @RequestMapping(value = "/blogger/message", method = RequestMethod.GET)
+    public Response findBloggerMessage(@RequestParam Integer status) {
+        List<BloggerMessageVo> list = bloggerMessageService.findBloggerMessageByStatus(status);
+        return new Response(true, StatusCode.OK, "查询成功", list);
+    }
 
     /*
      * 分页+多条件查询

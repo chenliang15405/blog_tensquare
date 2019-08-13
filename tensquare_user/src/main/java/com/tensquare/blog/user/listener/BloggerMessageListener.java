@@ -34,6 +34,7 @@ public class BloggerMessageListener {
 			bloggerMessage.setUserId((String) map.get("userId"));
 			bloggerMessage.setBlogId((String) map.get("blogId"));
 			bloggerMessage.setCommentId((Integer) map.get("commentId"));
+			bloggerMessage.setType((String) map.get("type"));
 			bloggerMessageService.save(bloggerMessage);
 		}
 		log.info("[user_comment_message_channel] 处理消息结束");

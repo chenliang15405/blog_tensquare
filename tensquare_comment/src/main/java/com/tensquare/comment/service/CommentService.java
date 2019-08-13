@@ -66,6 +66,10 @@ public class CommentService {
 	private static final String COMMENT_LIKE = "like";
 	private static final String COMMENT_DISLIKE = "dislike";
 
+	private static final String TYPE_FAVORITE = "favorite_comment";
+	private static final String TYPE_COMMENT = "comment";
+
+
 
 	/**
 	 * 根据博客id 分页查询
@@ -119,6 +123,11 @@ public class CommentService {
 				comment.setDislikeNum(dislikeNum != null ? ++dislikeNum : 1);
 			}
 			commentDao.save(comment);
+
+			// 发送mq消息，保存数据库，通知消息
+			log.info("【点赞模块】点赞发送mq消息 start");
+			sendMessageToBloger(comment.getUserId(), comment.getBlogId(), comment.getId(), TYPE_FAVORITE);
+			log.info("【点赞模块】点赞发送mq消息 end");
 		}
 		// 更新评论数据 end
 
@@ -146,8 +155,6 @@ public class CommentService {
 			redisUtil.set(COMMENT_DISLIKE_NUM_KEY + id, ++num);
 		}
 		// 使用ip作唯一性校验， 或者目前不做校验
-
-		// 发送mq消息，保存数据库，通知消息
 
 		Optional<Comment> optional = commentDao.findById(id);
 		Comment comment = optional.orElse(null);
@@ -196,11 +203,19 @@ public class CommentService {
 
 		//发送mq消息
 		log.info("【评论模块】新增评论发送MQ消息：Start");
-		sendMessageToBloger(comment.getUserId(), comment.getBlogId(), comment.getId());
+		sendMessageToBloger(comment.getUserId(), comment.getBlogId(), comment.getId(), TYPE_COMMENT);
 		log.info("【评论模块】新增评论发送MQ消息：End");
 	}
 
-
+	/**
+	 * 根据id查询评论
+	 * @param id
+	 * @return
+	 */
+	public Comment findById(Integer id) {
+		Optional<Comment> optional = commentDao.findById(id);
+		return optional.orElse(null);
+	}
 
 	/**
 	 * 调用user微服务创建用户，如果调用失败3次，则使用默认的userId
@@ -259,12 +274,13 @@ public class CommentService {
 	 * @param blogId
 	 * @param commentId
 	 */
-	private void sendMessageToBloger(String createUserId, String blogId, Integer commentId) {
+	private void sendMessageToBloger(String createUserId, String blogId, Integer commentId, String type) {
 		// 通过 rabbbitmq发送消息，通知博主有信息的消息提示
 		Map<String,Object> map = Maps.newHashMap();
 		map.put("userId", createUserId);
 		map.put("blogId", blogId);
 		map.put("commentId", commentId);
+		map.put("type", type);
 		rabbitTemplate.convertAndSend("user_comment_message_channel", map);
 	}
 
