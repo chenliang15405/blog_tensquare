@@ -138,9 +138,10 @@ DROP TABLE IF EXISTS `tb_blogger_message`;
 -- 通知博主消息数据表
 CREATE TABLE `tb_blogger_message` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'ID',
-  `user_id` varchar(20) NOT NULL COMMENT '用户ID',
-  `comment_id` int(11) NOT NULL COMMENT '评论ID',
+  `user_id` varchar(20) DEFAULT NULL COMMENT '用户ID',
+  `comment_id` int(11) DEFAULT NULL COMMENT '评论ID',
   `blog_id` varchar(20) DEFAULT NULL COMMENT '博客ID',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `type` varchar(100) DEFAULT NULL COMMENT '消息通知类型',
   `status` int(1) DEFAULT 0 COMMENT '是否阅读'
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='博主消息通知表';

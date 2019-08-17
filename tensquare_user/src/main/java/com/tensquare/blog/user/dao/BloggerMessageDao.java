@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface BloggerMessageDao extends JpaRepository<BloggerMessage, Integer>, JpaSpecificationExecutor<BloggerMessage> {
 
-	@Query("from BloggerMessage where status = :status")
+	@Query("from BloggerMessage where status = :status order by createDate desc")
 	List<BloggerMessage> findBloggerMessageByStatus(@Param("status") Integer status);
 
 }

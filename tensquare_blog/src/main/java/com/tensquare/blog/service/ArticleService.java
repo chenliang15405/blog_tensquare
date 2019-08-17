@@ -65,7 +65,7 @@ public class ArticleService {
 
 
 	/**
-	 * 点赞
+	 * 点赞 发送消息到mq
 	 * @param articleId
 	 */
 	public void thumbup(String articleId) {
@@ -76,6 +76,14 @@ public class ArticleService {
 		} catch (AmqpException e) {
 			log.error("点赞出现异常", e);
 		}
+	}
+
+	/**
+	 * 点赞
+	 * @param articleId
+	 */
+	public void addThumbup(String articleId) {
+		articleDao.addThumbup(articleId);
 	}
 
 	/**

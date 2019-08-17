@@ -1,6 +1,6 @@
 package com.tensquare.blog.listener;
 
-import com.tensquare.blog.dao.ArticleDao;
+import com.tensquare.blog.service.ArticleService;
 import com.tensquare.blog.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class BlogThumbupMqListener {
 
     @Autowired
-    private ArticleDao articleDao;
+    private ArticleService articleService;
     @Autowired
     private RedisUtil redisUtil;
 
@@ -41,8 +41,9 @@ public class BlogThumbupMqListener {
             value = @Queue("thumbupQueue")
     ))
     public void blogThumbupMqHandler(String articleId) {
+        log.info("【Article点赞消息模块】mq接收博客点赞消息 start");
         // 更新数据库中的blog 点赞数
-        articleDao.addThumbup(articleId);
+        articleService.addThumbup(articleId);
         // 更新redis中的点赞数
         String count = redisUtil.get(REDIS_KEY_THUMB_UP_COUNT + articleId);
         if(StringUtils.isNotBlank(count)) {
@@ -50,6 +51,7 @@ public class BlogThumbupMqListener {
         } else {
             redisUtil.set(REDIS_KEY_THUMB_UP_COUNT + articleId, 1);
         }
+        log.info("【Article点赞消息模块】mq接收博客点赞消息 end");
     }
 
 

@@ -17,6 +17,8 @@ import java.util.Date;
 @Setter
 public class BloggerMessageVo implements Serializable {
 
+	private Integer id; //主键id
+
 	private String userName; //用户名称
 
 	private String blogTitle;	//博客标题

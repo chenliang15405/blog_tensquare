@@ -5,6 +5,7 @@ import com.tensquare.blog.user.entity.AdminUser;
 import com.tensquare.blog.user.entity.JwtUser;
 import com.tensquare.blog.user.vo.BloggerVo;
 import com.tensquare.common.utils.IdWorker;
+import io.jsonwebtoken.lang.Assert;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,10 +117,14 @@ public class AdminUserService implements UserDetailsService {
      * @return
      */
     public BloggerVo findByLoginname(String loginName) {
+        Assert.notNull(loginName, "loginName must be not null");
         AdminUser adminuser = adminUserDao.findByLoginname(loginName);
-        BloggerVo bloggerVo = new BloggerVo();
-        BeanUtils.copyProperties(adminuser, bloggerVo);
-        return bloggerVo;
+        if(adminuser != null) {
+            BloggerVo bloggerVo = new BloggerVo();
+            BeanUtils.copyProperties(adminuser, bloggerVo);
+            return bloggerVo;
+        }
+        return null;
     }
 
     /**

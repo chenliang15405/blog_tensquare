@@ -103,13 +103,30 @@ public class AdminUserController {
 
     /**
      * 查询通知博主的消息
+     * axios的原因，只能传递json数据 需要研究一下
      * @return
      */
     @ApiOperation(value = "查询通知博主的消息")
     @RequestMapping(value = "/blogger/message", method = RequestMethod.GET)
-    public Response findBloggerMessage(@RequestParam Integer status) {
+    public Response findBloggerMessage(@RequestParam(required = false) Integer status) {
         List<BloggerMessageVo> list = bloggerMessageService.findBloggerMessageByStatus(status);
         return new Response(true, StatusCode.OK, "查询成功", list);
+    }
+
+    /**
+     * 更新通知消息状态
+     * @param id
+     * @param status
+     * @return
+     */
+    @ApiOperation(value = "更新通知消息状态")
+    @RequestMapping(value = "/blogger/message", method = RequestMethod.PUT)
+    public Response updateBloggerMessageStatus(@RequestParam Integer id, @RequestParam Integer status) {
+        boolean flag = bloggerMessageService.updateBloggerMessageStatus(id, status);
+        if(flag) {
+            return new Response(true, StatusCode.OK, "更新成功");
+        }
+        return new Response(false, StatusCode.ERROR, "更新失败");
     }
 
     /*

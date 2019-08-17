@@ -17,7 +17,7 @@ spring:
     properties:
       hibernate:
         hbm2ddl:
-          auto: update
+          auto: none
   redis:
     host: 132.232.104.247
     port: 6379
