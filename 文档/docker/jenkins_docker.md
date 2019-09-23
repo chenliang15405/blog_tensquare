@@ -56,7 +56,10 @@ docker run -d --name jenkins -u root -p 8080:8080  -p 50000:50000 \
 **1. 创建目录并赋权**
 `mkdir /sever/jenkins`
 
+`mkdir /var/jenkins_home`
+
 `chmod 777 -R jenkins`
+`chmod 777 -R /var/jenkins_home`
 
 **2. 创建Dockerfile**
 
@@ -102,6 +105,9 @@ jenkins/jenkins:1.0
   - -v /var/jenkins_home:/var/jenkins_home 将宿主机的目录挂载到jenkins的工作目录，方便查看工作空间`需要给/var/jenkins_home授权` `chown -R 1000 /var/jenkins_home`
   - -v /etc/localtime:/etc/localtime 挂载服务器的时间到容器的时间
 
+注意：
+    <font color=red>注意：如果没有jenkins_home，则需要创建该目录并给权限</font>
+    否则启动日志中会报错： Permission denied
 
 **5. 最后，如果在Jenkins配置jdk和maven**
  （1） 先尝试使用挂载的宿主机目录配置jdk和maven目录，git自动安装即可

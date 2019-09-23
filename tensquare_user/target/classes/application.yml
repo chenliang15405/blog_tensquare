@@ -17,12 +17,15 @@ spring:
     properties:
       hibernate:
         hbm2ddl:
-          auto: update
+          auto: none
   redis:
     host: 132.232.104.247
     port: 6379
     password: admin # 默认为空
     database: 0 # 默认也是使用 database=0
+  #rabbitmq
+  rabbitmq:
+    host: 132.232.104.247
 #jwt配置
 jwt:
   config:
@@ -40,5 +43,5 @@ eureka:
 user:
   comment:
     default:
-      nickName: Developmer
+      nickName: Developer
       avatarUrl: http://u.thsi.cn/imgsrc/sns/3ba262255b32a428a3e0b44cce35d3ee_259_346.jpg
