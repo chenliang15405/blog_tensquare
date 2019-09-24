@@ -92,7 +92,8 @@ sudo docker run -d -p 8080:8080 -p 50000:50000 --name jenkins \
 -v /server/jdk/jdk1.8.0_212/bin/java:/usr/bin/jdk1.8.0_212/java \
 -v /server/jdk/jdk1.8.0_212:/var/local/jdk1.8.0_212 \
 -v /server/apache-maven-3.1.1:/var/local/apache-maven-3.1.1 \
--v /var/jenkins_home:/var/jenkins_home \
+-v /server/maven_repository:/server/maven_repository \
+-v /server/jenkins_home:/var/jenkins_home \
 -v /etc/localtime:/etc/localtime \
 jenkins/jenkins:1.0
 
