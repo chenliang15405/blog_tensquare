@@ -27,6 +27,16 @@ eureka:
       defaultZone: http://47.98.232.143:6868/eureka/
   instance: # 开启ip注册，不开启，则使用服务名称注册
     prefer-ip-address: true
+    hostname: 132.232.104.247
+    ip-address: 132.232.104.247
+# 日志配置
+logging:
+  level:
+    root: info
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}) [%thread] %clr(%-5level) %logger{50}[%L] -%msg%n"
+    file: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}) [%thread] %clr(%-5level) %logger{50}[%L] -%msg%n"
+  config: classpath:logback-production.xml
 # 配置feign的熔断器 hystrix
 feign:
   hystrix:
@@ -34,8 +44,6 @@ feign:
     command:
       default:
         execution:
-          timeout:
-            enabled: true
           isolation:
             thread:
               timeoutInMilliseconds: 10000
