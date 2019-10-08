@@ -1,0 +1,22 @@
+server: 
+  port: 9003
+spring: 
+  application:  
+    name: tensquare-category #指定服务名
+  datasource:  
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://132.232.104.247:3306/tensquare_category?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    username: root
+    password: '!QAZ2wsx' # 特殊符号的密码需要使用单引号包主
+  jpa: 
+    database: MySQL
+    show-sql: true
+  rabbitmq:
+    host: 132.232.104.247
+# eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:6868/eureka/
+  instance: # 开启ip注册，不开启，则使用服务名称注册
+    prefer-ip-address: true

@@ -5,7 +5,10 @@ VOLUME /tmp
 # 拷贝文件到容器，handcuffs-reg-0.0.1-SNAPSHOT.jar这里是maven打包后的名字
 ADD tensquare_blog-1.0-SNAPSHOT.jar app.jar
 RUN bash -c 'touch /app.jar'
+# 配置时区
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # 配置容器启动后执行的命令
-ENTRYPOINT  ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+ENTRYPOINT  ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar","--spring.profiles.active=production"]
 # 暴露指定端口
 EXPOSE 9002

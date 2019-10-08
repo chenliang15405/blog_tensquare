@@ -132,7 +132,7 @@ public class ArticleController {
      */
     @ApiOperation(value = "分页条件查询", notes = "分页条件查询")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "searchMap", value = "查询条件", required = true, dataType = "Article", dataTypeClass = Article.class),
+            @ApiImplicitParam(name = "searchMap", value = "查询条件", required = false, dataType = "Article", dataTypeClass = Article.class),
             @ApiImplicitParam(name = "page", value = "当前页", required = true, dataType = "int", paramType = "path"),
             @ApiImplicitParam(name = "size", value = "每页条数", required = true, dataType = "int", paramType = "path")
     })

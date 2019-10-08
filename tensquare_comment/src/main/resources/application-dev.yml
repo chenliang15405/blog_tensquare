@@ -1,0 +1,50 @@
+server: 
+  port: 9005
+spring:
+  application:
+    name: tensquare-comment #指定服务名
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://132.232.104.247:3306/tensquare_comment?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    username: root
+    password: '!QAZ2wsx' # 特殊符号的密码需要使用单引号包主
+  jpa:
+    database: MySQL
+    show-sql: true
+  #rabbitmq
+  rabbitmq:
+    host: 132.232.104.247
+  #redis
+  redis:
+    host: 132.232.104.247
+    port: 6379
+    password: admin # 默认为空
+    database: 0 # 默认也是使用 database=0
+# eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:6868/eureka/
+  instance: # 开启ip注册，不开启，则使用服务名称注册
+    prefer-ip-address: true
+# 配置feign的熔断器 hystrix
+feign:
+  hystrix:
+    enabled: true
+    command:
+      default:
+        execution:
+          isolation:
+            thread:
+              timeoutInMilliseconds: 10000
+ribbon: # 配置ribbon
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+  MaxAutoRetries: 2
+  MaxAutoRetriesNextServer: 1
+
+# 其他配置
+comment:
+  user:
+    default:
+      userId: 00000000000000000001

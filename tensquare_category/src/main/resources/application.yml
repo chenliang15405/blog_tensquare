@@ -1,32 +1,3 @@
-server: 
-  port: 9003
-spring: 
-  application:  
-    name: tensquare-category #指定服务名
-  datasource:  
-    driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://132.232.104.247:3306/tensquare_category?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
-    username: root
-    password: '!QAZ2wsx' # 特殊符号的密码需要使用单引号包主
-  jpa: 
-    database: MySQL
-    show-sql: true
-  rabbitmq:
-    host: 132.232.104.247
-# 日志配置
-logging:
-  level:
-    root: info
-  pattern:
-    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}) [%thread] %clr(%-5level) %logger{50}[%L] -%msg%n"
-    file: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}) [%thread] %clr(%-5level) %logger{50}[%L] -%msg%n"
-  config: classpath:logback-production.xml
-# eureka
-eureka:
-  client:
-    service-url:
-      defaultZone: http://47.98.232.143:6868/eureka/
-  instance: # 开启ip注册，不开启，则使用服务名称注册
-    prefer-ip-address: true
-    hostname: 132.232.104.247
-    ip-address: 132.232.104.247
+spring:
+  profiles:
+    active: @spring.profiles.active@

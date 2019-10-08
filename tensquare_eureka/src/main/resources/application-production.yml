@@ -1,0 +1,8 @@
+server:
+  port: 6868
+eureka:
+  client:
+    register-with-eureka: false # 自己不注册到eureka中，自己是服务端
+    fetch-registry: false # 是否从eureka中获取注册信息
+    service-url: # eureka客户端注册到服务端的url
+      defaultZone: http://47.98.232.143:${server.port}/eureka/

@@ -104,7 +104,9 @@ public class ArticleService {
 	 */
 	public Page<Article> findSearch(Map whereMap, int page, int size) {
 		Specification<Article> specification = createSpecification(whereMap);
-		PageRequest pageRequest =  PageRequest.of(page-1, size);
+		Sort sort = new Sort(Sort.Direction.DESC,"createtime");
+		PageRequest pageRequest =  PageRequest.of(page-1, size, sort);
+		// 倒序查询
 		return articleDao.findAll(specification, pageRequest);
 	}
 

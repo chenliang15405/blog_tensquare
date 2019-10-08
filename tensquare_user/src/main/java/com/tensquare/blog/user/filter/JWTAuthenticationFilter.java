@@ -51,7 +51,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             Properties prop = PropertiesLoaderUtils.loadAllProperties("application.yml", Thread.currentThread().getContextClassLoader());
             jwtKey = prop.getProperty("key");
-            System.out.println(jwtKey);
+            System.out.println("-------appliction.yml jwt-key: -------" + jwtKey);
         } catch (IOException e) {
             log.error("读取配置文件出错", e);
         }

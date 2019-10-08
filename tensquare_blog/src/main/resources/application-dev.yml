@@ -1,0 +1,82 @@
+server: 
+  port: 9002
+spring: 
+  application:  
+    name: tensquare-blog #指定服务名
+  datasource:  
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://132.232.104.247:3306/tensquare_blog?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    username: root
+    password: '!QAZ2wsx'
+  jpa: 
+    database: MySQL
+    show-sql: true
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+  #rabbitmq
+  rabbitmq:
+    host: 132.232.104.247
+  redis:
+    host: 132.232.104.247
+    port: 6379
+    password: admin # 默认为空
+    database: 0 # 默认也是使用 database=0
+  # console 输出彩色日志
+  output:
+    ansi:
+      enabled: always
+  servlet: # 2.x 使用 servlet 1.5 使用 http
+    multipart:
+      max-file-size: 100MB # 最大支持文件大小
+      max-request-size: 100MB # 最大支持请求大小
+# eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:6868/eureka/
+  instance: # 开启ip注册，不开启，则使用服务名称注册
+    prefer-ip-address: true
+# 配置feign的熔断器 hystrix
+feign:
+  hystrix:
+    enabled: true
+    command:
+      default:
+        execution:
+          timeout:
+            enabled: true
+          isolation:
+            thread:
+              timeoutInMilliseconds: 10000
+ribbon: # 配置ribbon
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+  MaxAutoRetries: 2
+  MaxAutoRetriesNextServer: 1
+#  ribbon:
+#    ReadTimeout: 3000
+#    ConnectTimeout: 5000
+#    MaxAutoRetries: 1 #同一台实例最大重试次数,不包括首次调用
+#    MaxAutoRetriesNextServer: 1 #重试负载均衡其他的实例最大重试次数,不包括首次调用
+#    OkToRetryOnAllOperations: false  #是否所有操作都重试
+# 配置feign的链接超时时间，feign底层用的是ribbon，feign调用分为2层，一层是ribbon,一层是hystrix
+
+# 分布式文件系统fastdfs配置
+fdfs:
+  pool:
+    max-total: 153     # 从池中借出的对象的最大数目
+    max-wait-millis: 102  # 获取连接时的最大等待毫秒数100
+  thumbImage: # 缩略图生成参数，可选
+    width: 150
+    height: 150
+  web-server-url: http://132.232.104.247:9999/
+  connect-timeout: 600
+  so-timeout: 5000
+  tracker-list:
+    - 132.232.104.247:22122
+
+# 博客展示页面的server-url
+blog:
+  web-server-url: http://47.98.232.143/blog

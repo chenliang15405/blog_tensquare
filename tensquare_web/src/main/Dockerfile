@@ -6,6 +6,6 @@ VOLUME /tmp
 ADD tensquare_web-1.0-SNAPSHOT.jar app.jar
 RUN bash -c 'touch /app.jar'
 # 配置容器启动后执行的命令
-ENTRYPOINT  ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+ENTRYPOINT  ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar", "--spring.profiles.active=production"]
 # 暴露指定端口
 EXPOSE 9011

@@ -111,6 +111,7 @@ jenkins/jenkins:1.0
     否则启动日志中会报错： Permission denied
 
 **5. 最后，如果在Jenkins配置jdk和maven**
+
  （1） 先尝试使用挂载的宿主机目录配置jdk和maven目录，git自动安装即可
 
   (2) 如果配置宿主机的jdk、maven目录,构建项目时提示无法找到mvn命令，那么使用jenkins容器中的目录配置jdk、maven
@@ -124,11 +125,15 @@ jenkins/jenkins:1.0
 		3. 配置jdk maven git
 
 		4. 配置maven intergration
+    
+    - jdk环境配置--- 需要在宿主机安装好，然后配置到Jenkins中
+    - maven环境配置 --- 最好也是安装好在宿主机中，然后配置在Jenkins
+    - git环境配置--- liunx中默认一般都有
 
 
 
+**6. 配置Jenkins可能遇到的问题及解决方法**
 
-**6. 配置Jenkins肯能遇到的问题及解决方法**
 (1) ERROR: Maven Home /server/apache-maven-3.1.1 doesnt exist
 	Finished: FAILURE
 	`按照上面的配置maven目录即可`

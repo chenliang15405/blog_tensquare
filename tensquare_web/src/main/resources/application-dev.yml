@@ -1,0 +1,36 @@
+server:
+  port: 9011
+spring:
+  application:
+    name: tensquare-web #指定服务名
+eureka:
+  client:
+    service-url:
+      defaultZone: http://47.98.232.143:6868/eureka/
+  instance:
+    prefer-ip-address: true
+zuul:  #配置前端服务网关规则
+  routes:
+    tensquare-blog: # 文章, 这个是标示，需要唯一
+      path: /article/**  # 配置请求的URL规则, 访问的前面都要加上 /route-key/ + /aritlce/1
+      serviceId: tensquare-blog # 指定eureka中注册的服务id
+    tensquare-category:
+      path: /category/**
+      serviceId: tensquare-category
+    tensquare-tag:
+      path: /tag/**
+      serviceId: tensquare-tag
+    tensquare-user:
+      path: /user/**
+      serviceId: tensquare-user
+    tensquare-comment:
+      path: /comment/**
+      serviceId: tensquare-comment
+  host:
+    connect-timeout-millis: 60000
+    socket-timeout-millis: 60000
+ribbon: # 配置ribbon
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1
