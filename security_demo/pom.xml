@@ -12,6 +12,14 @@
     <groupId>com.tensquare.security.demo</groupId>
     <artifactId>security_demo</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.chenliang15405</groupId>
+            <artifactId>ffmpeg-common</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

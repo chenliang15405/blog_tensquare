@@ -79,4 +79,4 @@ fdfs:
 
 # 博客展示页面的server-url
 blog:
-  web-server-url: http://47.98.232.143/blog
+  web-server-url: http://localhost:3000/blog/#/blog/

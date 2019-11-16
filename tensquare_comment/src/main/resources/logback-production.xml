@@ -8,7 +8,7 @@
     <appender name="PROD_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${FILE_PATH}/tensquare_comment.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${FILE_PATH}/bind-api.%d{yyyy-MM-dd}-%i.log</FileNamePattern>
+            <FileNamePattern>${FILE_PATH}/tensquare_comment.%d{yyyy-MM-dd}-%i.log</FileNamePattern>
             <MaxHistory>30</MaxHistory>
             <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <MaxFileSize>50MB</MaxFileSize>
