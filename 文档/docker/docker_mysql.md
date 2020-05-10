@@ -25,15 +25,14 @@ mysql:5.7
 (3) 如果有需求可以将mysql的存储数据文件挂载到宿主机，
 	可以防止容器被删除之后，存储的数据也会丢失，并指定时区
 ```bash
-docker run -d --name mysql_pro \
--p 3307:3306 \
+docker run -d --name mysql_master \
+-p 3306:3306 \
 -e MYSQL_ROOT_PASSWORD='&UJM8ik,' \
--e MYSQL_DATABASE=DB_USER \
 -e TZ=Asia/Shanghai \
--v /data/mysql:/var/lib/mysql \
+-v /server/mysql-master:/var/lib/mysql \
 mysql:5.7 \
 --character-set-server=utf8mb4 \
---collation-server=utf8mb4_unicode_ci 
+--collation-server=utf8mb4_unicode_ci
 ```
 
 <font color=red>注意：</font>如果密码中特殊字，需要使用 '' 包裹
@@ -64,7 +63,7 @@ mysql:5.7 \
 
 - -v $PWD/sql-scripts/:/docker-entrypoint-initdb.d/ 将当前目录下的sql-scriptes文件夹
 	挂载到docker中，初始化myql时会执行该sql文件
-
+- MYSQL_DATABASE docker启动的时候创建该数据库，不用手动创建
 
 
 3. 执行命令查看
