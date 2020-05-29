@@ -4,3 +4,12 @@ docker run -d --name tensquare_rabbitmq \
 -p 5671:5671 -p 5672:5672 -p 4369:4369 \
 -p 15671:15671 -p 15672:15672 -p 25672:25672 \
 rabbitmq:management
+
+
+- 设置Rabbit的账号密码
+docker run -d --name tensquare_rabbitmq \
+-e RABBITMQ_DEFAULT_USER=tensquare \
+-e RABBITMQ_DEFAULT_PASS=tensquare! \
+-p 5671:5671 -p 5672:5672 -p 4369:4369 -p 15671:15671 -p 15672:15672 -p 25672:25672 \
+rabbitmq:management
+
