@@ -32,13 +32,13 @@ public class BlogThumbupMqListener {
     /**
      * 根据articleid 进行点赞操作。
      *
-     * 自动创建队列，Exchange 与 Queue绑定,指定routinng-key ,生产者指定exchange 与 routing-key 就可以发送到指定的queue
+     * @QueueBinding 自动创建队列，Exchange 与 Queue绑定,指定routinng-key ,生产者指定exchange 与 routing-key 就可以发送到指定的queue
      * @param articleId
      */
     @RabbitListener(bindings = @QueueBinding(
-            exchange = @Exchange("blog_thumbup"),
+            exchange = @Exchange(value = "blog_thumbup", durable = "true", type = "direct"), // type可以设置模式，默认direct
             key = "thumbup",
-            value = @Queue("thumbupQueue")
+            value = @Queue(value = "thumbupQueue", durable = "true") // durable 对queue开启队列消息持久化
     ))
     public void blogThumbupMqHandler(String articleId) {
         log.info("【Article点赞消息模块】mq接收博客点赞消息 start");

@@ -25,7 +25,7 @@ zuul:  #配置前端服务网关规则
       serviceId: tensquare-user
     tensquare-comment:
       path: /comment/**
-      serviceId: tensquare-comment
+      serviceId: tensquare-comment # 默认对相同名称的服务实现负载均衡 ribbon
   host:
     connect-timeout-millis: 60000
     socket-timeout-millis: 60000
