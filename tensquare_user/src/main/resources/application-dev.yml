@@ -6,10 +6,10 @@ spring:
   datasource:
     # url: jdbc:mysql://132.232.104.247:3306/tensquare_blog?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
     # 不显式设置字符集，集成服务器配置，服务器的mysql已经设置为utf8mb4
-    url: jdbc:mysql://132.232.104.247:3306/tensquare_user?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/tensquare_user?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.jdbc.Driver
     username: root
-    password: '!QAZ2wsx'
+    password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
     platform: mysql
   jpa:
@@ -18,14 +18,15 @@ spring:
       hibernate:
         hbm2ddl:
           auto: none
-  redis:
-    host: 132.232.104.247
-    port: 6379
-    password: admin # 默认为空
-    database: 0 # 默认也是使用 database=0
-  #rabbitmq
   rabbitmq:
     host: 132.232.104.247
+    password: tensquare!
+    username: tensquare
+  redis:
+    host: 132.232.104.247
+    port: 16379
+    password: tensquare123 # 默认为空
+    database: 0 # 默认也是使用 database=0
 # eureka
 eureka:
   client:
@@ -33,7 +34,18 @@ eureka:
       defaultZone: http://127.0.0.1:6868/eureka/
   instance: # 开启ip注册，不开启，则使用服务名称注册
     prefer-ip-address: true
-
+# 配置feign的熔断器 hystrix
+feign:
+  hystrix:
+    enabled: true
+    command:
+      default:
+        execution:
+          timeout:
+            enabled: true
+          isolation:
+            thread:
+              timeoutInMilliseconds: 3000
 # 其他配置
 user:
   comment:

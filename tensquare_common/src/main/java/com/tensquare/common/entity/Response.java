@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ * TODO 泛型
+ *
  * @auther alan.chen
  * @time 2019/6/4 8:40 PM
  */

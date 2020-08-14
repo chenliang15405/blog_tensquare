@@ -5,20 +5,22 @@ spring:
     name: tensquare-comment #指定服务名
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://132.232.104.247:3306/tensquare_comment?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/tensquare_blog?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
     username: root
-    password: '!QAZ2wsx' # 特殊符号的密码需要使用单引号包主
+    password: 123456 # 特殊符号的密码需要使用单引号包主
   jpa:
     database: MySQL
     show-sql: true
   #rabbitmq
   rabbitmq:
     host: 132.232.104.247
+    password: tensquare!
+    username: tensquare
   #redis
   redis:
     host: 132.232.104.247
-    port: 6379
-    password: admin # 默认为空
+    port: 16379
+    password: tensquare123 # 默认为空
     database: 0 # 默认也是使用 database=0
 # eureka
 eureka:

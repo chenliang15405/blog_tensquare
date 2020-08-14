@@ -2,6 +2,7 @@ package com.test.ffmpeg;
 
 import com.ffmpeg.common.response.Result;
 import com.ffmpeg.common.video.VideoOperation;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -41,6 +42,19 @@ public class FFMpegTest {
         VideoOperation ffmpeg = VideoOperation.builder(ffmpegEXE);
         Result result = ffmpeg.videoRotate(inputPath,2,"","" , outPutPath);
         System.out.println(result.getCode());
+        System.out.println(result.getErrMessage());
+    }
+
+    @Test
+    public void convertorWithBgmTest() throws IOException {
+        String inputPath = "/Users/alan.chen/Documents/notes/test/11111.mp4";
+        String outPutPath = "/Users/alan.chen/Documents/notes/test/1/222.mp4";
+        String noSoundPath = "/Users/alan.chen/Documents/notes/test/1/nosound.mp4";
+        String audioPath = "/Users/alan.chen/Documents/notes/young.mp3";
+        VideoOperation ffmpeg = VideoOperation.builder(ffmpegEXE);
+        Result result = ffmpeg.convertorWithBgmNoOriginCommon(inputPath, outPutPath, noSoundPath, audioPath, 5);
+        Integer expected = 0;
+        Assert.assertEquals(expected, result.getCode());
         System.out.println(result.getErrMessage());
     }
 

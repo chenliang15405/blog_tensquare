@@ -5,14 +5,16 @@ spring:
     name: tensquare-category #指定服务名
   datasource:  
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://132.232.104.247:3306/tensquare_category?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/tensquare_category?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
     username: root
-    password: '!QAZ2wsx' # 特殊符号的密码需要使用单引号包主
+    password: 123456
   jpa: 
     database: MySQL
     show-sql: true
   rabbitmq:
     host: 132.232.104.247
+    password: tensquare!
+    username: tensquare
 # eureka
 eureka:
   client:

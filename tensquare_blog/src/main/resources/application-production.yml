@@ -5,9 +5,9 @@ spring:
     name: tensquare-blog #指定服务名
   datasource:  
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://132.232.104.247:3306/tensquare_blog?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://106.14.60.133:13306/tensquare_blog?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
     username: root
-    password: '!QAZ2wsx'
+    password: '&UJM8ik,'
   jpa: 
     database: MySQL
     show-sql: true
@@ -18,10 +18,12 @@ spring:
   #rabbitmq
   rabbitmq:
     host: 132.232.104.247
+    password: tensquare!
+    username: tensquare
   redis:
     host: 132.232.104.247
-    port: 6379
-    password: admin # 默认为空
+    port: 16379
+    password: tensquare123 # 默认为空
     database: 0 # 默认也是使用 database=0
   # console 输出彩色日志
   output:
@@ -43,17 +45,17 @@ feign:
   hystrix:
     enabled: true
     command:
-      default:
+      default:  # 其中“default” 是全局配置，对所有的 @FeignClient 生效。还可以单独指定 微服务的名字（优先级高于default）
         execution:
           timeout:
-            enabled: true
+            enabled: true  #如果enabled设置为false，则请求超时交给ribbon控制,为true,则超时作为熔断根据
           isolation:
             thread:
-              timeoutInMilliseconds: 10000
+              timeoutInMilliseconds: 3000  #断路器超时时间，默认1000ms
 ribbon: # 配置ribbon
-  ReadTimeout: 60000
-  ConnectTimeout: 60000
-  MaxAutoRetries: 2
+  ReadTimeout: 2000   #负载均衡超时时间，默认值5000
+  ConnectTimeout: 2000  #ribbon请求连接的超时时间，默认值2000
+  MaxAutoRetries: 0
   MaxAutoRetriesNextServer: 1
 #  ribbon:
 #    ReadTimeout: 3000

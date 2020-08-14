@@ -2,4 +2,6 @@ server:
   port: 7070
 spring: 
   application:  
-    name: tensquare-demo #指定服务名
+    name: tensquare-demo
+  redis:
+    host: 127.0.0.1 #指定服务名

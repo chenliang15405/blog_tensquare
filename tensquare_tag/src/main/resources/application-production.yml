@@ -5,9 +5,9 @@ spring:
     name: tensquare-tag #指定服务名
   datasource:  
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://132.232.104.247:3306/tensquare_label?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://106.14.60.133:13306/tensquare_label?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
     username: root
-    password: '!QAZ2wsx'
+    password: '&UJM8ik,'
   jpa: 
     database: MySQL
     show-sql: true
@@ -18,8 +18,8 @@ eureka:
       defaultZone: http://47.98.232.143:6868/eureka/
   instance: # 开启ip注册，不开启，则使用服务名称注册
     prefer-ip-address: true
-    hostname: 140.143.237.191
-    ip-address: 140.143.237.191
+    hostname: 106.14.60.133
+    ip-address: 106.14.60.133
 # 日志配置
 logging:
   level:

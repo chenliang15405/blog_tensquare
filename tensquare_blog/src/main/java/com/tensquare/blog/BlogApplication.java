@@ -2,6 +2,7 @@ package com.tensquare.blog;
 
 import com.github.tobato.fastdfs.FdfsClientConfig;
 import com.tensquare.common.utils.IdWorker;
+import com.tensquare.common.utils.IpAddressUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -30,6 +31,11 @@ public class BlogApplication {
 	@Bean
 	public IdWorker idWorkker(){
 		return new IdWorker(1, 1);
+	}
+
+	@Bean
+	public IpAddressUtil ipAddressUtil() {
+		return new IpAddressUtil();
 	}
 	
 }

@@ -3,7 +3,6 @@ package com.tensquare.blog.listener;
 import com.tensquare.blog.service.ArticleService;
 import com.tensquare.blog.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
@@ -27,7 +26,6 @@ public class BlogThumbupMqListener {
     @Autowired
     private RedisUtil redisUtil;
 
-    private static final String REDIS_KEY_THUMB_UP_COUNT = "thumbup_count:";
 
     /**
      * 根据articleid 进行点赞操作。
@@ -43,14 +41,15 @@ public class BlogThumbupMqListener {
     public void blogThumbupMqHandler(String articleId) {
         log.info("【Article点赞消息模块】mq接收博客点赞消息 start");
         // 更新数据库中的blog 点赞数
+        // TODO 通过定时任务批量更新数据库=》服务器问题
         articleService.addThumbup(articleId);
         // 更新redis中的点赞数
-        String count = redisUtil.get(REDIS_KEY_THUMB_UP_COUNT + articleId);
-        if(StringUtils.isNotBlank(count)) {
-            redisUtil.getAndSet(REDIS_KEY_THUMB_UP_COUNT  + articleId, Integer.parseInt(count) + 1 + "");
-        } else {
-            redisUtil.set(REDIS_KEY_THUMB_UP_COUNT + articleId, 1);
-        }
+        //String count = redisUtil.get(REDIS_KEY_THUMB_UP_COUNT + articleId);
+        //if(StringUtils.isNotBlank(count)) {
+        //    redisUtil.getAndSet(REDIS_KEY_THUMB_UP_COUNT  + articleId, Integer.parseInt(count) + 1 + "");
+        //} else {
+        //    redisUtil.set(REDIS_KEY_THUMB_UP_COUNT + articleId, 1);
+        //}
         log.info("【Article点赞消息模块】mq接收博客点赞消息 end");
     }
 

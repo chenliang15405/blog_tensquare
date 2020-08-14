@@ -5,20 +5,22 @@ spring:
     name: tensquare-comment #指定服务名
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://132.232.104.247:3306/tensquare_comment?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://106.14.60.133:13306/tensquare_comment?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
     username: root
-    password: '!QAZ2wsx' # 特殊符号的密码需要使用单引号包主
+    password: '&UJM8ik,' # 特殊符号的密码需要使用单引号包主
   jpa:
     database: MySQL
     show-sql: true
   #rabbitmq
   rabbitmq:
     host: 132.232.104.247
+    password: tensquare!
+    username: tensquare
   #redis
   redis:
     host: 132.232.104.247
-    port: 6379
-    password: admin # 默认为空
+    port: 16379
+    password: tensquare123 # 默认为空
     database: 0 # 默认也是使用 database=0
 # eureka
 eureka:
@@ -27,8 +29,8 @@ eureka:
       defaultZone: http://47.98.232.143:6868/eureka/
   instance: # 开启ip注册，不开启，则使用服务名称注册
     prefer-ip-address: true
-    hostname: 140.143.237.191
-    ip-address: 140.143.237.191
+    hostname: 106.14.60.133
+    ip-address: 106.14.60.133
 # 日志配置
 logging:
   level:
@@ -48,8 +50,8 @@ feign:
             thread:
               timeoutInMilliseconds: 10000
 ribbon: # 配置ribbon
-  ReadTimeout: 60000
-  ConnectTimeout: 60000
+  ReadTimeout: 3000
+  ConnectTimeout: 3000
   MaxAutoRetries: 2
   MaxAutoRetriesNextServer: 1
 

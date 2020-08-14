@@ -1,5 +1,6 @@
 package com.tensquare.blog.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
  * @auther alan.chen
  * @time 2019/6/15 2:35 PM
  */
+@Slf4j
 @Component
 public class RedisUtil {
 
@@ -38,7 +40,7 @@ public class RedisUtil {
             redisTemplate.opsForValue().set(key, String.valueOf(value));
             result = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtil set error => [{}]", e);
         }
         return result;
     }
@@ -50,7 +52,7 @@ public class RedisUtil {
             redisTemplate.opsForValue().set(key, value, time, timeUnit);
             result = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtil setWithExpire error => [{}]", e);
         }
         return result;
     }
@@ -66,7 +68,7 @@ public class RedisUtil {
             redisTemplate.opsForValue().getAndSet(key, value);
             result = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtil getAndSet error => [{}]", e);
         }
         return result;
     }
@@ -85,6 +87,29 @@ public class RedisUtil {
         return result;
     }
 
+    public void incrNum(String key) {
+        redisTemplate.opsForValue().increment(key, 1);
+    }
 
+
+    /**
+     * set结构保存
+     * @param key
+     * @param value
+     * @return
+     */
+    public void setWithStar(String key, String value) {
+        redisTemplate.opsForHash().put(key, value, "1");
+    }
+
+    /**
+     * 查询是否包含该key中的value
+     * @param key
+     * @param value
+     * @return
+     */
+    public boolean contains(String key, String value) {
+        return redisTemplate.opsForHash().hasKey(key, value);
+    }
 
 }

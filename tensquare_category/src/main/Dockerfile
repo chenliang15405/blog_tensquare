@@ -9,6 +9,6 @@ RUN bash -c 'touch /app.jar'
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # 配置容器启动后执行的命令
-ENTRYPOINT  ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar","--spring.profiles.active=production"]
+ENTRYPOINT  ["java", "-Xms128m", "-Xmx256m", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar","--spring.profiles.active=production"]
 # 暴露指定端口
 EXPOSE 9003

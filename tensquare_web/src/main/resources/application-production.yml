@@ -27,10 +27,13 @@ zuul:  #配置前端服务网关规则
       path: /comment/**
       serviceId: tensquare-comment
   host:
-    connect-timeout-millis: 60000
+    connect-timeout-millis: 60000  # 网关的超时时间如果少于微服务的超时，则微服务的降级还没有发生，有可能网关就已经超时直接熔断了，所以网关的超时时间要大于微服务的调用超时时间*重试次数+降级调用其他服务的时间
     socket-timeout-millis: 60000
 ribbon: # 配置ribbon
-  ReadTimeout: 60000
-  ConnectTimeout: 60000
-  MaxAutoRetries: 0
-  MaxAutoRetriesNextServer: 1
+  ReadTimeout: 6000  #毫秒    连接超时时间
+  ConnectTimeout: 6000  #毫秒    连接超时时间
+  OkToRetryOnAllOperations: true  # 是否对所有操作都进行重试，对于post等非幂等性操作来说，做好幂等性接口
+  MaxAutoRetries: 1  # 对当前实例的最大重试次数
+  MaxAutoRetriesNextServer: 1  # 切换实例的最大重试次数(如果还失败就切换下，在切换下一个实例前，会再次重试一轮
+# Ribbon超时重试次数（总的请求次数）：（MaxAutoRetries+1）*（MaxAutoRetriesNextServer+1）
+# 如果Ribbon没有配置重试时间和次数，默认1S超时，默认重试1次。

@@ -6,7 +6,9 @@ import com.tensquare.blog.client.CategoryClient;
 import com.tensquare.blog.client.LabelClient;
 import com.tensquare.blog.dao.ArticleDao;
 import com.tensquare.blog.pojo.Article;
+import com.tensquare.blog.utils.RedisUtil;
 import com.tensquare.blog.vo.ArticleReqVo;
+import com.tensquare.common.constant.RedisKeyConstant;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.utils.IdWorker;
 import com.tensquare.common.vo.CategoryVo;
@@ -32,6 +34,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.*;
+
+import static com.tensquare.common.constant.RedisKeyConstant.*;
 
 /**
  * 服务层
@@ -59,6 +63,9 @@ public class ArticleService {
 	@Autowired
 	private LabelClient labelClient;
 
+	@Autowired
+	private RedisUtil redisUtil;
+
 	@Value("${blog.web-server-url}")
 	private String BLOG_WEB_SERVER_URL;
 
@@ -67,15 +74,25 @@ public class ArticleService {
 	/**
 	 * 点赞 发送消息到mq
 	 * @param articleId
+	 * @param ipAddress
 	 */
-	public void thumbup(String articleId) {
+	public int thumbup(String articleId, String ipAddress) {
 		// 使用mq实现点赞，1. 防止高并发 2. 可以将点赞数量再存储到redis中方便查询
+		// 验证Redis中是否有点赞，如果该用户已经点赞过了，则提示点赞过了
 		try {
+			if(redisUtil.contains(REDIS_KEY_STAR_ARTICLE_USER_PREFIX + articleId, ipAddress)) {
+				return 0;
+			}
+			// 还要保存点赞的用户ID，使用set结构，例如 blogID, ip，可以通过ip查询该用户是否已经点赞过了，  然后再使用一个key保存点赞量，incr增加
+			redisUtil.setWithStar(REDIS_KEY_STAR_ARTICLE_USER_PREFIX + articleId, ipAddress);
+			// 更新文章的点赞数量
+			redisUtil.incrNum(REDIS_KEY_THUMB_UP_COUNT + articleId);
 			//生产者指定exchange 与 routing-key 就可以发送到指定的queue
 			rabbitTemplate.convertAndSend("blog_thumbup", "thumbup", articleId);
 		} catch (AmqpException e) {
 			log.error("点赞出现异常", e);
 		}
+		return 1;
 	}
 
 	/**
@@ -137,7 +154,7 @@ public class ArticleService {
 	 * @param id
 	 * @return
 	 */
-	@Cacheable(value = "article:pojo", key = "#id")
+	@Cacheable(value = "article:content", key = "#id")
 	public Article findById(String id) {
 		// 需要对optional进行判断，如果不判断，则optional可能为null，报错 no such elementException
 		Optional<Article> optional = articleDao.findById(id);
@@ -181,7 +198,7 @@ public class ArticleService {
 	 */
 	// TODO cacheput 不能修改到数据
 //	@CachePut(value = "article:pojo", key = "#article.id")
-	@CacheEvict(value = "article:pojo", key = "#article.id")
+	@CacheEvict(value = "article:content", key = "#article.id")
 	public void update(ArticleReqVo vo) {
 		Article article = new Article();
 		// 先判断是否已经存在该分类，如果不存在，则保存一个，如果存在，则使用该分类id
@@ -244,7 +261,7 @@ public class ArticleService {
 	 * 删除
 	 * @param id
 	 */
-	@CacheEvict(value = "article:pojo", key = "#id")
+	@CacheEvict(value = "article:content", key = "#id")
 	public void deleteById(String id) {
 		articleDao.deleteById(id);
 	}
@@ -309,7 +326,7 @@ public class ArticleService {
                 /*if (searchMap.get("tagcolor")!=null && !"".equals(searchMap.get("tagcolor"))) {
                 	predicateList.add(cb.like(root.get("tagcolor").as(String.class), "%"+(String)searchMap.get("tagcolor")+"%"));
                 }*/
-				
+
 				return cb.and( predicateList.toArray(new Predicate[predicateList.size()]));
 
 			}

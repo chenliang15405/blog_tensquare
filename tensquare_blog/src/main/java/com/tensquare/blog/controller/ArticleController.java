@@ -9,9 +9,12 @@ import com.tensquare.blog.service.ArticleService;
 import com.tensquare.blog.utils.RedisUtil;
 import com.tensquare.blog.vo.ArticleArchiveRespVo;
 import com.tensquare.blog.vo.ArticleReqVo;
+import com.tensquare.blog.vo.ArticleRespVo;
+import com.tensquare.common.constant.RedisKeyConstant;
 import com.tensquare.common.entity.PageResponse;
 import com.tensquare.common.entity.Response;
 import com.tensquare.common.entity.StatusCode;
+import com.tensquare.common.utils.IpAddressUtil;
 import com.tensquare.common.vo.CategoryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -24,8 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+
+import static com.tensquare.common.constant.RedisKeyConstant.ARCHIVE_USER_INFO_KEY;
+import static com.tensquare.common.constant.RedisKeyConstant.ARTICLE_CATEGORY_KEY;
 
 /**
  * 控制器层
@@ -49,9 +56,8 @@ public class ArticleController {
     @Autowired
     private RedisUtil redisUtil;
 
-
-    private final String ARCHIVE_USER_INFO_KEY = "article:archive:user:";
-    private final String ARTICLE_CATEGORY_KEY = "article:category:";
+    @Autowired
+    private IpAddressUtil ipAddressUtil;
 
 
     /**
@@ -61,9 +67,13 @@ public class ArticleController {
      */
     @ApiOperation(value = "文章点赞", notes = "")
     @ApiImplicitParam(name = "articleId", value = "文章id", required = true, dataType = "String", paramType = "path")
-    @RequestMapping(value = "/thumbup/{articleId}", method = RequestMethod.PUT)
-    public Response thumbup(@PathVariable String articleId) {
-        articleService.thumbup(articleId);
+    @RequestMapping(value = "/thumbup/{articleId}", method = RequestMethod.GET)
+    public Response thumbup(@PathVariable String articleId, HttpServletRequest request) {
+        String ipAddress = ipAddressUtil.getIpAddress(request);
+        int status = articleService.thumbup(articleId, ipAddress);
+        if(status == 0) {
+            return new Response(true, StatusCode.REPERROR, "已经点赞过了");
+        }
         return new Response(true, StatusCode.OK, "点赞成功","done_thumbup");
     }
 
@@ -94,14 +104,23 @@ public class ArticleController {
     @ApiOperation(value = "通过id获取article信息", notes = "通过id获取article信息")
     @ApiImplicitParam(name = "id", value = "需要查询的id", required = true, dataType = "String", paramType = "path")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Response findById(@PathVariable String id) {
+    public Response findById(@PathVariable String id, HttpServletRequest request) {
         Article article = articleService.findById(id);
+        ArticleRespVo vo = new ArticleRespVo();
         //获取分类名称
         if(article != null) {
+            BeanUtils.copyProperties(article, vo);
+
+            // 判断当前IP是否点赞
+            String ipAddress = ipAddressUtil.getIpAddress(request);
+            boolean isStar = redisUtil.contains(RedisKeyConstant.REDIS_KEY_STAR_ARTICLE_USER_PREFIX + id, ipAddress);
+            vo.setStared(isStar);
+
+            // 查询分类
             String categoryName = getCategoryNameWithFeign(article.getCategoryid());
             article.setCategoryName(categoryName);
         }
-        return new Response(true, StatusCode.OK, "查询成功", article);
+        return new Response(true, StatusCode.OK, "查询成功", vo);
     }
 
     /**
@@ -219,12 +238,12 @@ public class ArticleController {
      * @return
      */
     public String getCategoryNameWithFeign(String id) {
-        if (id == null) {
+        if (StringUtils.isBlank(id)) {
             return null;
         }
         String categoryname = redisUtil.get(ARTICLE_CATEGORY_KEY + id);
         if(StringUtils.isNotBlank(categoryname)) {
-            log.info("根据id: {} ,从缓存中get categoryname : {}", id, categoryname);
+            log.info("根据id: [{}], 从缓存中get categoryname: [{}]", id, categoryname);
             return categoryname;
         }
         Response resp = categoryClient.findById(id);
@@ -236,7 +255,6 @@ public class ArticleController {
                 log.info("将id: {} ,category: {}  存储到redis中：",id,categoryname);
                 redisUtil.set(ARTICLE_CATEGORY_KEY + id, categoryname);
             }
-            return categoryname;
         }
         return categoryname;
     }
