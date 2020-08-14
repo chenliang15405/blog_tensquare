@@ -17,5 +17,21 @@ docker的配置文件，打开该端口
 
 `systemctl restart docker` -- 重新启动
 
+**2. 如果是云数据库**
+ - 增加安全组规则   
+ 手动添加2375的入口端口到白名单，否则会拦截
+ - 防火墙添加2375端口
+     ```bash
+        #查看防火墙状态
+        systemctl status firewalld
+        #启动防火墙 没有提示
+        systemctl start firewalld
+        #添加2375端口
+        firewall-cmd --permanent --zone=public --add-port=2375/tcp
+        #防火墙重启
+        firewall-cmd --reload
+        #查看开放的端口
+        firewall-cmd --permanent --zone=public --list-ports
+    ```
 
 

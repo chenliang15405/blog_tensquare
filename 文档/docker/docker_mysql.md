@@ -55,6 +55,17 @@ mysql:5.7 \
 
 <br>
 
+- 目前服务器命令
+```bash
+docker run -d --name mysql-master \
+-p 13306:3306 \
+-e MYSQL_ROOT_PASSWORD='&UJM8ik,' \
+-e TZ=Asia/Shanghai \
+-v /server/mysql-master/data:/var/lib/mysql \
+-v /server/mysql-master/conf/mysql.cnf:/etc/mysql/conf.d/mysql.cnf \
+mysql:5.7
+```
+
 说明：
 - -e MYSQL_ROOT_PASSWORD 指定初始密码为root
 - -p 指定映射端口

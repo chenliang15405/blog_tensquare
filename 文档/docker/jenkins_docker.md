@@ -15,10 +15,13 @@
 **2. 运行容器**
 ```bash
 docker run -d --name jenkins -u root -p 8080:8080  -p 50000:50000 \
- -v /test/jenkins-test:/var/jenkins_home \
+ -v /server/jenkins:/var/jenkins_home \
  -v /var/run/docker.sock:/var/run/docker.sock \
- -v /server/apache-maven-3.1.1:/usr/local/maven3.6 \
- -v /server/jdk/jdk1.8.0_212:/usr/local/jdk1.8 \
+-v /server/jdk/jdk1.8.0_212/bin/java:/usr/bin/jdk1.8.0_212/java \
+-v /server/jdk/jdk1.8.0_212:/var/local/jdk1.8 \
+-v /server/maven/apache-maven-3.6.1:/var/local/maven3.6 \
+-v /server/maven/maven_repository:/var/local/maven_repository \
+-v /etc/localtime:/etc/localtime \
  jenkins
  ```
 
@@ -54,12 +57,12 @@ docker run -d --name jenkins -u root -p 8080:8080  -p 50000:50000 \
 ###### 二. 通过Dockerfile构建jenkins镜像
 
 **1. 创建目录并赋权**
-`mkdir /sever/jenkins`
+`mkdir -p /server/jenkins`
 
-`mkdir /var/jenkins_home`
+`mkdir -p /server/jenkins_home`
 
 `chmod 777 -R jenkins`
-`chmod 777 -R /var/jenkins_home`
+`chmod 777 -R /server/jenkins_home`
 
 **2. 创建Dockerfile**
 
@@ -91,9 +94,9 @@ sudo docker run -d -p 8080:8080 -p 50000:50000 --name jenkins \
 -v /usr/bin/mv:/usr/bin/mv \
 -v /server/jdk/jdk1.8.0_212/bin/java:/usr/bin/jdk1.8.0_212/java \
 -v /server/jdk/jdk1.8.0_212:/var/local/jdk1.8.0_212 \
--v /server/apache-maven-3.1.1:/var/local/apache-maven-3.1.1 \
--v /server/maven_repository:/server/maven_repository \
--v /server/jenkins_home:/var/jenkins_home \
+-v /server/maven/apache-maven-3.6.1:/var/local/apache-maven-3.6.1 \
+-v /server/maven/maven_repository:/server/maven/maven_repository \
+-v /server/jenkins_home:/server/jenkins_home \
 -v /etc/localtime:/etc/localtime \
 jenkins/jenkins:1.0
 
